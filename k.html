@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Kurze Rückmeldung</title>
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<div class="blatt">
+
+  <div class="kopf">
+    <p class="firma" id="firma">&nbsp;</p>
+    <p class="zusatz" id="zusatz">&nbsp;</p>
+  </div>
+
+  <div class="inhalt">
+
+    <!-- 1) Die Frage ---------------------------------------------------- -->
+    <section id="schritt-frage">
+      <h1 id="anrede">Guten Tag</h1>
+      <p class="leise" id="fragetext">
+        Wir waren bei Ihnen im Einsatz. Hat alles gepasst?
+      </p>
+
+      <div class="daumen-paar">
+        <button class="daumen ja" id="knopf-ja">
+          <span class="zeichen">👍</span>
+          <span>
+            <span class="wort">Ja, alles bestens</span>
+            <span class="neben">Ich bin zufrieden</span>
+          </span>
+        </button>
+
+        <button class="daumen nein" id="knopf-nein">
+          <span class="zeichen">👎</span>
+          <span>
+            <span class="wort">Es gab ein Problem</span>
+            <span class="neben">Etwas passt noch nicht</span>
+          </span>
+        </button>
+      </div>
+
+      <p class="winzig" style="margin-top:22px">
+        Ihre Rückmeldung geht direkt an den Betrieb. Es entstehen keine Kosten.
+      </p>
+    </section>
+
+    <!-- 2a) Daumen hoch ------------------------------------------------- -->
+    <section id="schritt-ja" class="versteckt">
+      <h1>Das freut uns.</h1>
+      <p class="leise" id="ja-text">
+        Danke für Ihr Vertrauen. Wenn Sie zwei Minuten übrig haben:
+        Eine kurze Bewertung auf Google hilft uns wirklich weiter –
+        und anderen bei der Suche nach einem verlässlichen Betrieb.
+      </p>
+
+      <a class="knopf gross gut" id="google-knopf" href="#" target="_blank" rel="noopener">
+        Bewertung schreiben
+      </a>
+
+      <p class="winzig" style="margin-top:16px">
+        Dauert etwa zwei Minuten. Sie brauchen dafür ein Google-Konto –
+        das haben die meisten Android-Handys ohnehin.
+      </p>
+
+      <hr class="trenner">
+      <p class="winzig">Kein Interesse? Dann einfach dieses Fenster schließen. Alles gut.</p>
+    </section>
+
+    <!-- 2b) Daumen runter ----------------------------------------------- -->
+    <section id="schritt-nein" class="versteckt">
+      <h1>Das tut uns leid.</h1>
+      <p class="leise" id="nein-text">
+        Sagen Sie kurz, was nicht passt – die Nachricht geht direkt an den Betrieb,
+        nicht an eine Zentrale. Wir melden uns bei Ihnen.
+      </p>
+
+      <div class="feld">
+        <label for="problem">Was passt nicht?</label>
+        <textarea id="problem" placeholder="Zum Beispiel: Der Anschluss unter der Spüle tropft noch."></textarea>
+      </div>
+
+      <div class="feld">
+        <label for="rueckruf">Telefonnummer für den Rückruf (freiwillig)</label>
+        <input type="tel" id="rueckruf" placeholder="z. B. 0664 1234567">
+      </div>
+
+      <button class="knopf gross" id="senden-knopf">Absenden</button>
+      <p class="winzig" style="margin-top:14px" id="fehler-hinweis"></p>
+    </section>
+
+    <!-- 3) Danke --------------------------------------------------------- -->
+    <section id="schritt-danke" class="versteckt">
+      <h1>Danke, ist angekommen.</h1>
+      <p class="leise" id="danke-text">Der Betrieb hat Ihre Nachricht erhalten und meldet sich.</p>
+      <p class="winzig">Sie können dieses Fenster jetzt schließen.</p>
+    </section>
+
+  </div>
+</div>
+
+<script src="betriebe.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* --- Adresse auslesen: k.html#m.Sarah ---------------------------------- */
+  var roh = (location.hash || "").replace(/^#/, "");
+  var teile = roh.split(".");
+  var kuerzel = teile[0] || "m";
+  var vorname = teile.slice(1).join(".");
+  try { vorname = decodeURIComponent(vorname); } catch (e) {}
+  vorname = vorname.replace(/\+/g, " ").trim();
+
+  var betrieb = BETRIEBE[kuerzel] || BETRIEBE.m;
+  var gewerk = GEWERKE[betrieb.gewerk] || GEWERKE.installateur;
+
+  /* --- Seite mit den Betriebsdaten füllen -------------------------------- */
+  document.documentElement.style.setProperty("--marke", betrieb.farbe || "#1c5d99");
+  document.getElementById("firma").textContent = betrieb.name;
+  document.getElementById("zusatz").textContent = "Kurze Rückmeldung – dauert 10 Sekunden";
+  document.title = betrieb.name + " – kurze Rückmeldung";
+
+  document.getElementById("anrede").textContent =
+    vorname ? "Guten Tag " + vorname + "," : "Guten Tag,";
+
+  document.getElementById("fragetext").textContent =
+    "hier ist " + betrieb.chef + " von " + betrieb.name + ". " +
+    "Wir haben " + gewerk.arbeit + " bei Ihnen abgeschlossen. Hat alles gepasst?";
+
+  var g = document.getElementById("google-knopf");
+  if (betrieb.googleLink) g.href = betrieb.googleLink;
+
+  /* --- Umschalten zwischen den Schritten --------------------------------- */
+  var schritte = ["frage", "ja", "nein", "danke"];
+  function zeige(welcher) {
+    schritte.forEach(function (s) {
+      document.getElementById("schritt-" + s).classList.toggle("versteckt", s !== welcher);
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* --- Meldung an den Betrieb -------------------------------------------- */
+  function melde(art, text, nummer) {
+    if (!betrieb.meldeSchluessel) return Promise.resolve(false); // Testbetrieb
+    return fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        access_key: betrieb.meldeSchluessel,
+        subject: art === "ja"
+          ? "Zufrieden: " + (vorname || "Kunde")
+          : "PROBLEM: " + (vorname || "Kunde"),
+        from_name: betrieb.name,
+        Kunde: vorname || "(kein Name)",
+        Rueckmeldung: art === "ja" ? "Zufrieden (Daumen hoch)" : "Problem gemeldet",
+        Text: text || "-",
+        Rueckrufnummer: nummer || "-",
+        Zeitpunkt: new Date().toLocaleString("de-AT"),
+      }),
+    }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+
+  /* --- Klicks ------------------------------------------------------------ */
+  document.getElementById("knopf-ja").addEventListener("click", function () {
+    zeige("ja");
+    melde("ja", "", "");
+  });
+
+  document.getElementById("knopf-nein").addEventListener("click", function () {
+    zeige("nein");
+  });
+
+  document.getElementById("senden-knopf").addEventListener("click", function () {
+    var knopf = this;
+    var text = document.getElementById("problem").value.trim();
+    var nummer = document.getElementById("rueckruf").value.trim();
+    var hinweis = document.getElementById("fehler-hinweis");
+
+    if (!text) {
+      hinweis.textContent = "Bitte schreiben Sie kurz, was nicht passt.";
+      document.getElementById("problem").focus();
+      return;
+    }
+
+    knopf.disabled = true;
+    knopf.textContent = "Wird gesendet …";
+    hinweis.textContent = "";
+
+    melde("nein", text, nummer).then(function (ok) {
+      if (ok || !betrieb.meldeSchluessel) {
+        zeige("danke");
+      } else {
+        knopf.disabled = false;
+        knopf.textContent = "Absenden";
+        hinweis.textContent =
+          "Das hat gerade nicht geklappt. Bitte rufen Sie den Betrieb direkt an.";
+      }
+    });
+  });
+
+  zeige("frage");
+})();
+</script>
+</body>
+</html>

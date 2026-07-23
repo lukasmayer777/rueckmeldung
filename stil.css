@@ -1,0 +1,254 @@
+/* ---------------------------------------------------------------------------
+   Gemeinsames Aussehen für beide Seiten.
+   Grundgedanke: Werkstatt-Werkzeug, nicht Hochglanz-App.
+   Große Flächen, kräftige Farben, alles mit Handschuh bedienbar.
+--------------------------------------------------------------------------- */
+
+:root {
+  --tinte: #14161a;
+  --grau: #5c626b;
+  --hellgrau: #8b9199;
+  --linie: #d5d8dc;
+  --papier: #ffffff;
+  --flaeche: #f4f2ee;
+  --marke: #1c5d99;
+  --gut: #1d7a3e;
+  --gut-hell: #eaf5ed;
+  --schlecht: #b3261e;
+  --schlecht-hell: #fbeceb;
+  --radius: 4px;
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--tinte);
+  background: var(--flaeche);
+  -webkit-font-smoothing: antialiased;
+}
+
+.blatt {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--papier);
+  border-left: 1px solid var(--linie);
+  border-right: 1px solid var(--linie);
+}
+
+/* --- Kopfzeile mit Firmenbalken ------------------------------------------ */
+
+.kopf {
+  border-top: 6px solid var(--marke);
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid var(--linie);
+}
+
+.kopf .firma {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  margin: 0;
+}
+
+.kopf .zusatz {
+  font-size: 13px;
+  color: var(--grau);
+  margin: 3px 0 0;
+}
+
+.inhalt { padding: 24px 22px 40px; }
+
+/* --- Text ---------------------------------------------------------------- */
+
+h1 {
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+  margin: 0 0 10px;
+}
+
+h2 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  color: var(--marke);
+  margin: 0 0 12px;
+}
+
+p { margin: 0 0 14px; }
+.leise { color: var(--grau); font-size: 15px; }
+.winzig { color: var(--hellgrau); font-size: 12.5px; line-height: 1.45; }
+
+/* --- Große Antwortflächen (Daumen) --------------------------------------- */
+
+.daumen-paar { display: grid; gap: 12px; margin: 26px 0 8px; }
+
+.daumen {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 20px 20px;
+  border: 2px solid var(--linie);
+  border-radius: var(--radius);
+  background: var(--papier);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, transform .06s;
+}
+
+.daumen:active { transform: scale(.985); }
+
+.daumen .zeichen { font-size: 34px; line-height: 1; }
+.daumen .wort { font-size: 18px; font-weight: 700; display: block; }
+.daumen .neben { font-size: 14px; color: var(--grau); display: block; margin-top: 1px; }
+
+.daumen.ja:hover, .daumen.ja:focus-visible {
+  border-color: var(--gut); background: var(--gut-hell); outline: none;
+}
+.daumen.nein:hover, .daumen.nein:focus-visible {
+  border-color: var(--schlecht); background: var(--schlecht-hell); outline: none;
+}
+
+/* --- Knöpfe -------------------------------------------------------------- */
+
+.knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 17px 20px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--tinte);
+  color: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity .12s, transform .06s;
+}
+
+.knopf:active { transform: scale(.99); }
+.knopf:hover { opacity: .9; }
+.knopf.gross { padding: 20px; font-size: 18px; }
+.knopf.marke { background: var(--marke); }
+.knopf.gut { background: var(--gut); }
+.knopf.stumm { background: transparent; color: var(--grau); border: 1.5px solid var(--linie); font-weight: 600; }
+
+.knopf-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* --- Formularfelder ------------------------------------------------------ */
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--grau);
+  margin: 0 0 6px;
+}
+
+input[type="text"], input[type="tel"], textarea, select {
+  width: 100%;
+  padding: 14px 14px;
+  border: 1.5px solid var(--linie);
+  border-radius: var(--radius);
+  background: var(--papier);
+  font: inherit;
+  font-size: 17px;
+  color: var(--tinte);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--marke);
+  box-shadow: 0 0 0 3px rgba(28, 93, 153, .14);
+}
+
+textarea { min-height: 120px; resize: vertical; }
+
+.feld { margin-bottom: 16px; }
+.feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* --- Liste --------------------------------------------------------------- */
+
+.liste { margin: 0; padding: 0; list-style: none; }
+
+.zeile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 4px;
+  border-bottom: 1px solid var(--linie);
+}
+
+.zeile:first-child { border-top: 1px solid var(--linie); }
+
+.zeile .wer { flex: 1; min-width: 0; }
+.zeile .name { font-weight: 700; font-size: 17px; }
+.zeile .details { font-size: 13.5px; color: var(--grau); margin-top: 1px; }
+
+.marke-punkt {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--linie); flex: 0 0 auto;
+}
+.marke-punkt.offen { background: #d9a300; }
+.marke-punkt.fertig { background: var(--gut); }
+
+.mini {
+  padding: 9px 13px;
+  border: 1.5px solid var(--linie);
+  border-radius: var(--radius);
+  background: var(--papier);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mini:hover { border-color: var(--tinte); }
+.mini.weg { border: none; color: var(--hellgrau); font-weight: 400; padding: 9px 6px; }
+
+/* --- Kästen -------------------------------------------------------------- */
+
+.kasten {
+  background: var(--flaeche);
+  border-left: 3px solid var(--marke);
+  padding: 15px 17px;
+  margin: 0 0 20px;
+  font-size: 15px;
+}
+
+.kasten.warnung { border-left-color: #d9a300; }
+
+.leer {
+  text-align: center;
+  padding: 46px 20px;
+  color: var(--hellgrau);
+}
+
+.trenner { height: 1px; background: var(--linie); margin: 26px 0; border: 0; }
+
+.zahlen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--linie); border: 1px solid var(--linie); margin-bottom: 22px; }
+.zahlen div { background: var(--papier); padding: 14px 10px; text-align: center; }
+.zahlen .z { font-size: 26px; font-weight: 700; line-height: 1.1; }
+.zahlen .b { font-size: 12px; color: var(--grau); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+.versteckt { display: none !important; }
+
+@media (max-width: 420px) {
+  .feld-paar, .knopf-paar { grid-template-columns: 1fr; }
+  h1 { font-size: 22px; }
+}

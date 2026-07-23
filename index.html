@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Rückmeldungen</title>
+<link rel="stylesheet" href="stil.css">
+<style>
+  .kopfleiste { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .kopfleiste select { width:auto; padding:8px 10px; font-size:14px; font-weight:700; border-radius:4px; }
+  .abschnitt { margin-bottom:30px; }
+  .vorschau { background:var(--flaeche); border-left:3px solid var(--linie); padding:13px 15px; font-size:14.5px; line-height:1.5; margin:0 0 18px; white-space:pre-wrap; }
+  details.einstellungen { margin-top:34px; border-top:1px solid var(--linie); padding-top:18px; }
+  details.einstellungen summary { cursor:pointer; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--grau); }
+  details.einstellungen .inner { padding-top:16px; }
+</style>
+</head>
+<body>
+
+<div class="blatt">
+
+  <div class="kopf">
+    <div class="kopfleiste">
+      <div>
+        <p class="firma">Rückmeldungen</p>
+        <p class="zusatz" id="heute">&nbsp;</p>
+      </div>
+      <select id="betrieb-wahl" title="Betrieb"></select>
+    </div>
+  </div>
+
+  <div class="inhalt">
+
+    <!-- Zahlen ---------------------------------------------------------- -->
+    <div class="zahlen">
+      <div><div class="z" id="z-offen">0</div><div class="b">zu senden</div></div>
+      <div><div class="z" id="z-unterwegs">0</div><div class="b">unterwegs</div></div>
+      <div><div class="z" id="z-monat">0</div><div class="b">30 Tage</div></div>
+    </div>
+
+    <!-- Neue Baustelle --------------------------------------------------- -->
+    <section class="abschnitt">
+      <h2>Baustelle fertig</h2>
+      <div class="feld-paar">
+        <div class="feld">
+          <label for="e-name">Vorname</label>
+          <input type="text" id="e-name" placeholder="Sarah" autocomplete="off">
+        </div>
+        <div class="feld">
+          <label for="e-nummer">Handynummer</label>
+          <input type="tel" id="e-nummer" placeholder="0664 1234567" autocomplete="off">
+        </div>
+      </div>
+      <div class="feld">
+        <label for="e-notiz">Notiz für dich (freiwillig)</label>
+        <input type="text" id="e-notiz" placeholder="z. B. Bad Linzer Straße" autocomplete="off">
+      </div>
+      <button class="knopf gross" id="eintragen">Fertig – eintragen</button>
+      <p class="winzig" id="e-fehler" style="margin-top:10px"></p>
+    </section>
+
+    <!-- Zu senden -------------------------------------------------------- -->
+    <section class="abschnitt" id="block-offen">
+      <h2>Jetzt senden</h2>
+      <p class="vorschau" id="vorschau"></p>
+      <ul class="liste" id="liste-offen"></ul>
+    </section>
+
+    <!-- Erinnerung ------------------------------------------------------- -->
+    <section class="abschnitt versteckt" id="block-erinnerung">
+      <h2>Erinnerung fällig</h2>
+      <div class="kasten warnung">
+        Vor über 4 Tagen gesendet, keine Reaktion. Eine einzige Erinnerung – danach
+        nicht mehr nachfassen.
+      </div>
+      <ul class="liste" id="liste-erinnerung"></ul>
+    </section>
+
+    <!-- Unterwegs -------------------------------------------------------- -->
+    <section class="abschnitt versteckt" id="block-unterwegs">
+      <h2>Unterwegs</h2>
+      <ul class="liste" id="liste-unterwegs"></ul>
+    </section>
+
+    <!-- Leerzustand ------------------------------------------------------ -->
+    <div class="leer versteckt" id="leerhinweis">
+      Noch nichts eingetragen.<br>Trag die erste fertige Baustelle oben ein.
+    </div>
+
+    <!-- Einstellungen ---------------------------------------------------- -->
+    <details class="einstellungen">
+      <summary>Einstellungen</summary>
+      <div class="inner">
+        <div class="feld">
+          <label for="basis">Adresse der Kundenseite</label>
+          <input type="text" id="basis" placeholder="https://…/k.html">
+          <p class="winzig" style="margin-top:6px">
+            Diese Adresse bekommt der Kunde in der Nachricht. Sie muss im Internet
+            erreichbar sein, sonst kann sein Handy die Seite nicht öffnen.
+          </p>
+        </div>
+        <div class="knopf-paar">
+          <button class="knopf stumm" id="basis-speichern">Adresse merken</button>
+          <button class="knopf stumm" id="alles-loeschen">Alles löschen</button>
+        </div>
+        <p class="winzig" style="margin-top:14px">
+          Alle Einträge liegen nur in diesem Browser auf diesem Gerät.
+          Nichts wird an einen Server geschickt.
+        </p>
+      </div>
+    </details>
+
+  </div>
+</div>
+
+<script src="betriebe.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var SPEICHER = "nachfass-eintraege";
+  var SPEICHER_BASIS = "nachfass-basis";
+  var SPEICHER_BETRIEB = "nachfass-betrieb";
+  var ERINNERUNG_NACH_TAGEN = 4;
+  var TAG = 24 * 60 * 60 * 1000;
+
+  var eintraege = laden();
+  var kuerzel = localStorage.getItem(SPEICHER_BETRIEB) || Object.keys(BETRIEBE)[0];
+
+  /* --- Speicher ---------------------------------------------------------- */
+  function laden() {
+    try { return JSON.parse(localStorage.getItem(SPEICHER)) || []; }
+    catch (e) { return []; }
+  }
+  function sichern() {
+    localStorage.setItem(SPEICHER, JSON.stringify(eintraege));
+  }
+
+  /* --- Hilfsmittel -------------------------------------------------------- */
+  function betrieb() { return BETRIEBE[kuerzel] || BETRIEBE[Object.keys(BETRIEBE)[0]]; }
+
+  function basisAdresse() {
+    var gemerkt = localStorage.getItem(SPEICHER_BASIS);
+    if (gemerkt) return gemerkt;
+    return location.href.replace(/[^\/]*(\?.*)?(#.*)?$/, "") + "k.html";
+  }
+
+  function nummerInternational(n) {
+    var s = (n || "").replace(/[^\d+]/g, "");
+    if (s.indexOf("+") === 0) return s.slice(1);
+    if (s.indexOf("00") === 0) return s.slice(2);
+    if (s.indexOf("0") === 0) return "43" + s.slice(1);   // Österreich
+    return s;
+  }
+
+  /* Die Texte sind absichtlich fest verbaut und nicht änderbar.
+     Grund: Sobald das Wort "Bewertung" oder "Google" in einer Nachricht steht,
+     ist sie Werbung und braucht die vorherige Zustimmung des Empfängers.
+     Kurz halten, keine Sonderzeichen - sonst wird aus einer SMS zwei. */
+
+  function nachricht(e) {
+    var b = betrieb();
+    var link = basisAdresse() + "#" + kuerzel + "." + encodeURIComponent(e.vorname);
+
+    if (e.gesendet) {
+      // Erinnerung: klingt wie nachgehört, nicht wie eine Wiederholung
+      return "Guten Tag " + e.vorname + ", " + b.chef + " von " + b.name +
+             " hier. Ich wollte nur kurz nachfragen, ob bei Ihnen alles passt: " + link;
+    }
+
+    return "Guten Tag " + e.vorname + ", hier ist " + b.chef + " von " + b.name +
+           ". Hat bei Ihnen alles gepasst? Kurz antippen: " + link;
+  }
+
+  function datumKurz(zeit) {
+    var d = new Date(zeit);
+    return d.toLocaleDateString("de-AT", { day: "2-digit", month: "2-digit" });
+  }
+
+  function tageSeit(zeit) { return Math.floor((Date.now() - zeit) / TAG); }
+
+  /* --- Senden ------------------------------------------------------------ */
+  function sendeSMS(e) {
+    var text = nachricht(e);
+    var nr = (e.nummer || "").replace(/[^\d+]/g, "");
+    location.href = "sms:" + nr + "?&body=" + encodeURIComponent(text);
+    markiereGesendet(e);
+  }
+
+  function sendeWhatsApp(e) {
+    var text = nachricht(e);
+    var nr = nummerInternational(e.nummer);
+    window.open("https://wa.me/" + nr + "?text=" + encodeURIComponent(text), "_blank");
+    markiereGesendet(e);
+  }
+
+  function markiereGesendet(e) {
+    if (!e.gesendet) e.gesendet = Date.now();
+    else e.erinnert = Date.now();
+    sichern();
+    zeichne();
+  }
+
+  /* --- Zeile bauen -------------------------------------------------------- */
+  function zeile(e, art) {
+    var li = document.createElement("li");
+    li.className = "zeile";
+
+    var punkt = document.createElement("span");
+    punkt.className = "marke-punkt " + (art === "offen" ? "" : art === "erinnerung" ? "offen" : "fertig");
+    li.appendChild(punkt);
+
+    var wer = document.createElement("div");
+    wer.className = "wer";
+    var name = document.createElement("div");
+    name.className = "name";
+    name.textContent = e.vorname;
+    wer.appendChild(name);
+
+    var det = document.createElement("div");
+    det.className = "details";
+    var stueck = [e.nummer];
+    if (e.notiz) stueck.push(e.notiz);
+    if (art === "erinnerung") stueck.push("vor " + tageSeit(e.gesendet) + " Tagen gesendet");
+    else if (art === "unterwegs") stueck.push("gesendet " + datumKurz(e.gesendet));
+    det.textContent = stueck.join(" · ");
+    wer.appendChild(det);
+    li.appendChild(wer);
+
+    if (art === "offen" || art === "erinnerung") {
+      var sms = document.createElement("button");
+      sms.className = "mini";
+      sms.textContent = "SMS";
+      sms.addEventListener("click", function () { sendeSMS(e); });
+      li.appendChild(sms);
+
+      var wa = document.createElement("button");
+      wa.className = "mini";
+      wa.textContent = "WhatsApp";
+      wa.addEventListener("click", function () { sendeWhatsApp(e); });
+      li.appendChild(wa);
+    }
+
+    var weg = document.createElement("button");
+    weg.className = "mini weg";
+    weg.textContent = "✕";
+    weg.title = "Eintrag entfernen";
+    weg.addEventListener("click", function () {
+      eintraege = eintraege.filter(function (x) { return x.id !== e.id; });
+      sichern();
+      zeichne();
+    });
+    li.appendChild(weg);
+
+    return li;
+  }
+
+  /* --- Neu zeichnen ------------------------------------------------------- */
+  function zeichne() {
+    var meine = eintraege.filter(function (e) { return e.betrieb === kuerzel; });
+
+    var offen = meine.filter(function (e) { return !e.gesendet; });
+    var erinnerung = meine.filter(function (e) {
+      return e.gesendet && !e.erinnert && tageSeit(e.gesendet) >= ERINNERUNG_NACH_TAGEN;
+    });
+    var unterwegs = meine.filter(function (e) {
+      return e.gesendet && (e.erinnert || tageSeit(e.gesendet) < ERINNERUNG_NACH_TAGEN);
+    });
+
+    document.getElementById("z-offen").textContent = offen.length;
+    document.getElementById("z-unterwegs").textContent = unterwegs.length + erinnerung.length;
+    document.getElementById("z-monat").textContent = meine.filter(function (e) {
+      return e.gesendet && tageSeit(e.gesendet) < 30;
+    }).length;
+
+    fuelle("liste-offen", offen, "offen");
+    fuelle("liste-erinnerung", erinnerung, "erinnerung");
+    fuelle("liste-unterwegs", unterwegs.slice().reverse(), "unterwegs");
+
+    document.getElementById("block-offen").classList.toggle("versteckt", offen.length === 0);
+    document.getElementById("block-erinnerung").classList.toggle("versteckt", erinnerung.length === 0);
+    document.getElementById("block-unterwegs").classList.toggle("versteckt", unterwegs.length === 0);
+    document.getElementById("leerhinweis").classList.toggle("versteckt", meine.length !== 0);
+
+    if (offen.length) {
+      document.getElementById("vorschau").textContent = nachricht(offen[0]);
+    }
+  }
+
+  function fuelle(id, liste, art) {
+    var ul = document.getElementById(id);
+    ul.textContent = "";
+    liste.forEach(function (e) { ul.appendChild(zeile(e, art)); });
+  }
+
+  /* --- Betriebsauswahl ---------------------------------------------------- */
+  function betriebeFuellen() {
+    var s = document.getElementById("betrieb-wahl");
+    s.textContent = "";
+    Object.keys(BETRIEBE).forEach(function (k) {
+      var o = document.createElement("option");
+      o.value = k;
+      o.textContent = BETRIEBE[k].name;
+      s.appendChild(o);
+    });
+    s.value = kuerzel;
+    s.style.display = Object.keys(BETRIEBE).length > 1 ? "" : "none";
+  }
+
+  /* --- Bedienung ---------------------------------------------------------- */
+  document.getElementById("eintragen").addEventListener("click", function () {
+    var name = document.getElementById("e-name").value.trim();
+    var nummer = document.getElementById("e-nummer").value.trim();
+    var notiz = document.getElementById("e-notiz").value.trim();
+    var fehler = document.getElementById("e-fehler");
+
+    if (!name) { fehler.textContent = "Vorname fehlt."; return; }
+    if (nummer.replace(/\D/g, "").length < 7) {
+      fehler.textContent = "Die Handynummer sieht nicht vollständig aus.";
+      return;
+    }
+    fehler.textContent = "";
+
+    eintraege.push({
+      id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+      betrieb: kuerzel,
+      vorname: name,
+      nummer: nummer,
+      notiz: notiz,
+      angelegt: Date.now(),
+      gesendet: null,
+      erinnert: null,
+    });
+    sichern();
+
+    document.getElementById("e-name").value = "";
+    document.getElementById("e-nummer").value = "";
+    document.getElementById("e-notiz").value = "";
+    document.getElementById("e-name").focus();
+    zeichne();
+  });
+
+  document.getElementById("betrieb-wahl").addEventListener("change", function () {
+    kuerzel = this.value;
+    localStorage.setItem(SPEICHER_BETRIEB, kuerzel);
+    document.documentElement.style.setProperty("--marke", betrieb().farbe || "#1c5d99");
+    zeichne();
+  });
+
+  document.getElementById("basis-speichern").addEventListener("click", function () {
+    var wert = document.getElementById("basis").value.trim();
+    if (wert) localStorage.setItem(SPEICHER_BASIS, wert);
+    else localStorage.removeItem(SPEICHER_BASIS);
+    this.textContent = "Gemerkt";
+    var k = this;
+    setTimeout(function () { k.textContent = "Adresse merken"; }, 1400);
+    zeichne();
+  });
+
+  document.getElementById("alles-loeschen").addEventListener("click", function () {
+    if (!confirm("Wirklich alle Einträge löschen?")) return;
+    eintraege = [];
+    sichern();
+    zeichne();
+  });
+
+  /* --- Start -------------------------------------------------------------- */
+  document.getElementById("heute").textContent =
+    new Date().toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
+  document.getElementById("basis").value = localStorage.getItem(SPEICHER_BASIS) || "";
+  document.documentElement.style.setProperty("--marke", betrieb().farbe || "#1c5d99");
+  betriebeFuellen();
+  zeichne();
+})();
+</script>
+</body>
+</html>
