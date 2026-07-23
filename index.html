@@ -45,31 +45,37 @@
     <section class="abschnitt">
       <h2>Baustelle fertig</h2>
 
-      <div class="feld">
-        <label for="e-nummer">Handynummer des Kunden</label>
-        <input type="tel" inputmode="tel" id="e-nummer" placeholder="0664 1234567"
-               autocomplete="off" style="font-size:20px; padding:16px;">
-      </div>
+      <button class="knopf gross" id="schnell-whatsapp" style="background:#25a35a;">
+        Kunde per WhatsApp fragen
+      </button>
+      <p class="winzig" style="margin-top:8px">
+        Öffnet WhatsApp mit fertigem Text – du tippst nur auf den Kunden in deiner
+        WhatsApp-Liste. Kein Eintippen, keine Nummer nötig.
+      </p>
 
-      <button type="button" class="mehr-schalter" id="mehr-schalter">
-        + Vorname und Ort (freiwillig, macht die Nachricht persönlicher)
+      <button type="button" class="mehr-schalter" id="mehr-schalter" style="margin-top:18px">
+        + Kunde ohne WhatsApp? Per SMS senden (oder mit automatischer Erinnerung)
       </button>
 
       <div id="mehr-felder" class="versteckt">
+        <div class="feld">
+          <label for="e-nummer">Handynummer des Kunden</label>
+          <input type="tel" inputmode="tel" id="e-nummer" placeholder="0664 1234567"
+                 autocomplete="off" style="font-size:20px; padding:16px;">
+        </div>
         <div class="feld-paar">
           <div class="feld">
-            <label for="e-name">Vorname</label>
+            <label for="e-name">Vorname (freiwillig)</label>
             <input type="text" id="e-name" placeholder="Sarah" autocomplete="off">
           </div>
           <div class="feld">
-            <label for="e-notiz">Ort / Baustelle</label>
+            <label for="e-notiz">Ort / Baustelle (freiwillig)</label>
             <input type="text" id="e-notiz" placeholder="z. B. Bad Linzer Str." autocomplete="off">
           </div>
         </div>
+        <button class="knopf gross" id="eintragen">In die Liste – für SMS und Erinnerung</button>
+        <p class="winzig" id="e-fehler" style="margin-top:10px"></p>
       </div>
-
-      <button class="knopf gross" id="eintragen">Fertig – eintragen</button>
-      <p class="winzig" id="e-fehler" style="margin-top:10px"></p>
     </section>
 
     <!-- Zu senden -------------------------------------------------------- -->
@@ -100,6 +106,20 @@
       Noch nichts eingetragen.<br>Trag die erste fertige Baustelle oben ein.
     </div>
 
+    <!-- QR-Code ---------------------------------------------------------- -->
+    <section class="abschnitt">
+      <button type="button" class="mehr-schalter" id="qr-schalter">
+        + QR-Code zum Aushängen anzeigen
+      </button>
+      <div id="qr-box" class="versteckt" style="text-align:center; padding:8px 0 4px;">
+        <div id="qr-bild" style="display:inline-block; background:#fff; padding:12px; border:1px solid var(--linie); border-radius:4px;"></div>
+        <p class="leise" style="font-size:14px; margin:14px 0 4px;">
+          Für Rechnung, Firmenauto oder Visitenkarte. Wer scannt, kommt direkt zur Rückmelde-Seite.
+        </p>
+        <p class="winzig" id="qr-link" style="word-break:break-all;"></p>
+      </div>
+    </section>
+
     <!-- Einstellungen ---------------------------------------------------- -->
     <details class="einstellungen">
       <summary>Einstellungen</summary>
@@ -127,6 +147,7 @@
 </div>
 
 <script src="betriebe.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 (function () {
   "use strict";
@@ -355,18 +376,48 @@
     zeichne();
   });
 
-  /* Aufklappen der freiwilligen Felder */
+  /* Schnellweg: WhatsApp ohne Nummer – WhatsApp wählt den Kunden selbst aus */
+  document.getElementById("schnell-whatsapp").addEventListener("click", function () {
+    var text = nachricht({ vorname: "", nummer: "" });
+    window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
+  });
+
+  /* Aufklappen des SMS-/Erinnerungs-Wegs */
   document.getElementById("mehr-schalter").addEventListener("click", function () {
     var felder = document.getElementById("mehr-felder");
     var auf = felder.classList.toggle("versteckt") === false;
     this.style.display = "none";
-    if (auf) document.getElementById("e-name").focus();
+    if (auf) document.getElementById("e-nummer").focus();
+  });
+
+  /* QR-Code zum Aushängen */
+  var qrErzeugt = false;
+  function qrZuruecksetzen() {
+    document.getElementById("qr-bild").textContent = "";
+    qrErzeugt = false;
+    var box = document.getElementById("qr-box");
+    if (!box.classList.contains("versteckt")) qrErzeugen();
+  }
+  function qrErzeugen() {
+    var link = basisAdresse() + "#" + kuerzel;
+    new QRCode(document.getElementById("qr-bild"), {
+      text: link, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M,
+    });
+    document.getElementById("qr-link").textContent = link;
+    qrErzeugt = true;
+  }
+  document.getElementById("qr-schalter").addEventListener("click", function () {
+    var box = document.getElementById("qr-box");
+    var auf = box.classList.toggle("versteckt") === false;
+    if (auf && !qrErzeugt) qrErzeugen();
+    this.textContent = auf ? "– QR-Code ausblenden" : "+ QR-Code zum Aushängen anzeigen";
   });
 
   document.getElementById("betrieb-wahl").addEventListener("change", function () {
     kuerzel = this.value;
     localStorage.setItem(SPEICHER_BETRIEB, kuerzel);
     document.documentElement.style.setProperty("--marke", betrieb().farbe || "#1c5d99");
+    qrZuruecksetzen();
     zeichne();
   });
 
