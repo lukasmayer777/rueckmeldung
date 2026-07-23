@@ -14,6 +14,8 @@
   details.einstellungen { margin-top:34px; border-top:1px solid var(--linie); padding-top:18px; }
   details.einstellungen summary { cursor:pointer; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--grau); }
   details.einstellungen .inner { padding-top:16px; }
+  .mehr-schalter { display:block; width:100%; text-align:left; background:none; border:none; color:var(--marke); font:inherit; font-size:14px; font-weight:600; cursor:pointer; padding:2px 0 4px; margin:0 0 16px; }
+  .mehr-schalter:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
@@ -42,20 +44,30 @@
     <!-- Neue Baustelle --------------------------------------------------- -->
     <section class="abschnitt">
       <h2>Baustelle fertig</h2>
-      <div class="feld-paar">
-        <div class="feld">
-          <label for="e-name">Vorname</label>
-          <input type="text" id="e-name" placeholder="Sarah" autocomplete="off">
-        </div>
-        <div class="feld">
-          <label for="e-nummer">Handynummer</label>
-          <input type="tel" id="e-nummer" placeholder="0664 1234567" autocomplete="off">
-        </div>
-      </div>
+
       <div class="feld">
-        <label for="e-notiz">Notiz für dich (freiwillig)</label>
-        <input type="text" id="e-notiz" placeholder="z. B. Bad Linzer Straße" autocomplete="off">
+        <label for="e-nummer">Handynummer des Kunden</label>
+        <input type="tel" inputmode="tel" id="e-nummer" placeholder="0664 1234567"
+               autocomplete="off" style="font-size:20px; padding:16px;">
       </div>
+
+      <button type="button" class="mehr-schalter" id="mehr-schalter">
+        + Vorname und Ort (freiwillig, macht die Nachricht persönlicher)
+      </button>
+
+      <div id="mehr-felder" class="versteckt">
+        <div class="feld-paar">
+          <div class="feld">
+            <label for="e-name">Vorname</label>
+            <input type="text" id="e-name" placeholder="Sarah" autocomplete="off">
+          </div>
+          <div class="feld">
+            <label for="e-notiz">Ort / Baustelle</label>
+            <input type="text" id="e-notiz" placeholder="z. B. Bad Linzer Str." autocomplete="off">
+          </div>
+        </div>
+      </div>
+
       <button class="knopf gross" id="eintragen">Fertig – eintragen</button>
       <p class="winzig" id="e-fehler" style="margin-top:10px"></p>
     </section>
@@ -161,15 +173,17 @@
 
   function nachricht(e) {
     var b = betrieb();
-    var link = basisAdresse() + "#" + kuerzel + "." + encodeURIComponent(e.vorname);
+    var link = basisAdresse() + "#" + kuerzel + "." + encodeURIComponent(e.vorname || "");
+    // Name ist freiwillig: mit Name persönlicher, ohne Name trotzdem höflich
+    var anrede = e.vorname ? "Guten Tag " + e.vorname : "Guten Tag";
 
     if (e.gesendet) {
       // Erinnerung: klingt wie nachgehört, nicht wie eine Wiederholung
-      return "Guten Tag " + e.vorname + ", " + b.chef + " von " + b.name +
+      return anrede + ", " + b.chef + " von " + b.name +
              " hier. Ich wollte nur kurz nachfragen, ob bei Ihnen alles passt: " + link;
     }
 
-    return "Guten Tag " + e.vorname + ", hier ist " + b.chef + " von " + b.name +
+    return anrede + ", hier ist " + b.chef + " von " + b.name +
            ". Hat bei Ihnen alles gepasst? Kurz antippen: " + link;
   }
 
@@ -215,12 +229,13 @@
     wer.className = "wer";
     var name = document.createElement("div");
     name.className = "name";
-    name.textContent = e.vorname;
+    name.textContent = e.vorname || e.nummer;   // ohne Name: Nummer als Überschrift
     wer.appendChild(name);
 
     var det = document.createElement("div");
     det.className = "details";
-    var stueck = [e.nummer];
+    var stueck = [];
+    if (e.vorname) stueck.push(e.nummer);        // Nummer nur, wenn oben schon der Name steht
     if (e.notiz) stueck.push(e.notiz);
     if (art === "erinnerung") stueck.push("vor " + tageSeit(e.gesendet) + " Tagen gesendet");
     else if (art === "unterwegs") stueck.push("gesendet " + datumKurz(e.gesendet));
@@ -315,7 +330,6 @@
     var notiz = document.getElementById("e-notiz").value.trim();
     var fehler = document.getElementById("e-fehler");
 
-    if (!name) { fehler.textContent = "Vorname fehlt."; return; }
     if (nummer.replace(/\D/g, "").length < 7) {
       fehler.textContent = "Die Handynummer sieht nicht vollständig aus.";
       return;
@@ -337,8 +351,16 @@
     document.getElementById("e-name").value = "";
     document.getElementById("e-nummer").value = "";
     document.getElementById("e-notiz").value = "";
-    document.getElementById("e-name").focus();
+    document.getElementById("e-nummer").focus();
     zeichne();
+  });
+
+  /* Aufklappen der freiwilligen Felder */
+  document.getElementById("mehr-schalter").addEventListener("click", function () {
+    var felder = document.getElementById("mehr-felder");
+    var auf = felder.classList.toggle("versteckt") === false;
+    this.style.display = "none";
+    if (auf) document.getElementById("e-name").focus();
   });
 
   document.getElementById("betrieb-wahl").addEventListener("change", function () {
