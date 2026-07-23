@@ -45,12 +45,19 @@
     <section class="abschnitt">
       <h2>Baustelle fertig</h2>
 
+      <div class="feld">
+        <label for="s-name">Vorname des Kunden (freiwillig)</label>
+        <input type="text" id="s-name" placeholder="Sarah" autocomplete="off">
+      </div>
+
       <button class="knopf gross" id="schnell-whatsapp" style="background:#25a35a;">
         Kunde per WhatsApp fragen
       </button>
       <p class="winzig" style="margin-top:8px">
         Öffnet WhatsApp mit fertigem Text – du tippst nur auf den Kunden in deiner
-        WhatsApp-Liste. Kein Eintippen, keine Nummer nötig.
+        WhatsApp-Liste. Kein Eintippen der Nummer.
+        <br>Mit Vorname merkt sich das Programm den Kunden und erinnert <b>dich</b>,
+        falls nach ein paar Tagen nichts kommt.
       </p>
 
       <button type="button" class="mehr-schalter" id="mehr-schalter" style="margin-top:18px">
@@ -225,8 +232,13 @@
 
   function sendeWhatsApp(e) {
     var text = nachricht(e);
-    var nr = nummerInternational(e.nummer);
-    window.open("https://wa.me/" + nr + "?text=" + encodeURIComponent(text), "_blank");
+    if (e.nummer) {
+      var nr = nummerInternational(e.nummer);
+      window.open("https://wa.me/" + nr + "?text=" + encodeURIComponent(text), "_blank");
+    } else {
+      // ohne Nummer: WhatsApp den Kontakt selbst auswählen lassen
+      window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
+    }
     markiereGesendet(e);
   }
 
@@ -256,7 +268,7 @@
     var det = document.createElement("div");
     det.className = "details";
     var stueck = [];
-    if (e.vorname) stueck.push(e.nummer);        // Nummer nur, wenn oben schon der Name steht
+    if (e.vorname && e.nummer) stueck.push(e.nummer);   // Nummer nur zeigen, wenn oben der Name steht
     if (e.notiz) stueck.push(e.notiz);
     if (art === "erinnerung") stueck.push("vor " + tageSeit(e.gesendet) + " Tagen gesendet");
     else if (art === "unterwegs") stueck.push("gesendet " + datumKurz(e.gesendet));
@@ -265,11 +277,13 @@
     li.appendChild(wer);
 
     if (art === "offen" || art === "erinnerung") {
-      var sms = document.createElement("button");
-      sms.className = "mini";
-      sms.textContent = "SMS";
-      sms.addEventListener("click", function () { sendeSMS(e); });
-      li.appendChild(sms);
+      if (e.nummer) {   // SMS nur sinnvoll, wenn eine Nummer da ist
+        var sms = document.createElement("button");
+        sms.className = "mini";
+        sms.textContent = "SMS";
+        sms.addEventListener("click", function () { sendeSMS(e); });
+        li.appendChild(sms);
+      }
 
       var wa = document.createElement("button");
       wa.className = "mini";
@@ -378,7 +392,29 @@
 
   /* Schnellweg: WhatsApp ohne Nummer – WhatsApp wählt den Kunden selbst aus */
   document.getElementById("schnell-whatsapp").addEventListener("click", function () {
-    var text = nachricht({ vorname: "", nummer: "" });
+    var name = document.getElementById("s-name").value.trim();
+
+    // Mit Vorname: Kunde wird gemerkt, damit die Erinnerung an Hans möglich ist.
+    // Ohne Vorname: einfach abschicken, ohne Spur.
+    var e = { vorname: name, nummer: "" };
+    if (name) {
+      e = {
+        id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
+        betrieb: kuerzel,
+        vorname: name,
+        nummer: "",
+        notiz: "",
+        angelegt: Date.now(),
+        gesendet: Date.now(),   // gilt sofort als geschickt → Erinnerung läuft
+        erinnert: null,
+      };
+      eintraege.push(e);
+      sichern();
+      document.getElementById("s-name").value = "";
+      zeichne();
+    }
+
+    var text = nachricht({ vorname: name, nummer: "" });
     window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
   });
 
