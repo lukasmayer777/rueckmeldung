@@ -33,7 +33,7 @@ const BETRIEBE = {
 
 /* Gewerk-Wörter: damit die Nachricht nach der jeweiligen Baustelle klingt. */
 const GEWERKE = {
-  installateur: { arbeit: "die Arbeiten",       ding: "Bad / Heizung" },
+  installateur: { arbeit: "die Installationsarbeiten", ding: "Bad / Heizung" },
   dachdecker:   { arbeit: "die Dacharbeiten",   ding: "Dach" },
   elektriker:   { arbeit: "die Elektroarbeiten", ding: "Elektroinstallation" },
   fliesenleger: { arbeit: "die Fliesenarbeiten", ding: "Fliesen" },

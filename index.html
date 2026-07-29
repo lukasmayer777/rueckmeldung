@@ -202,17 +202,28 @@
   function nachricht(e) {
     var b = betrieb();
     var link = basisAdresse() + "#" + kuerzel + "." + encodeURIComponent(e.vorname || "");
-    // Name ist freiwillig: mit Name persönlicher, ohne Name trotzdem höflich
-    var anrede = e.vorname ? "Guten Tag " + e.vorname : "Guten Tag";
+    // "Hallo" statt "Guten Tag": kürzer, wärmer, passt auch bei jüngeren
+    // Kunden. Name ist freiwillig, ohne Namen geht es genauso.
+    var anrede = e.vorname ? "Hallo " + e.vorname : "Hallo";
 
     if (e.gesendet) {
-      // Erinnerung: klingt wie nachgehört, nicht wie eine Wiederholung
-      return anrede + ", " + b.chef + " von " + b.name +
-             " hier. Ich wollte nur kurz nachfragen, ob bei Ihnen alles passt: " + link;
+      // Erinnerung: sagt offen, dass schon einmal gefragt wurde. Ehrlich klingt
+      // besser als ein zweiter Versuch, der so tut, als wäre er der erste.
+      return anrede + ", " + b.chef + " von " + b.name + " nochmal. " +
+             "Ich wollte nur wissen, ob bei Ihnen eh alles passt. " +
+             "Kurz Bescheid: " + link + " Oder einfach zurückschreiben.";
     }
 
-    return anrede + ", hier ist " + b.chef + " von " + b.name +
-           ". Hat bei Ihnen alles gepasst? Kurz antippen: " + link;
+    /* Reihenfolge ist Absicht, sie nimmt der Nachricht das Betrugs-Gefühl:
+       1. Wer schreibt (Chef + Betrieb), bevor irgendetwas verlangt wird
+       2. Was wirklich passiert ist - das weiß nur, wer tatsächlich da war
+       3. Erst dann die Frage, erst danach der Link
+       4. Und immer das Angebot, einfach zurückzuschreiben. Genau das
+          bietet keine Betrugsnachricht an, weil sie keine Antwort will. */
+    return anrede + ", " + b.chef + " von " + b.name + ". " +
+           "Danke, dass wir heute bei Ihnen arbeiten durften 🙂 " +
+           "Passt soweit alles? Wenn was ist, sagen Sie's mir bitte: " + link +
+           " Sie können mir auch einfach zurückschreiben.";
   }
 
   function datumKurz(zeit) {
