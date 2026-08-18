@@ -1,22 +1,38 @@
 /* ---------------------------------------------------------------------------
-   Gemeinsames Aussehen für beide Seiten.
-   Grundgedanke: Werkstatt-Werkzeug, nicht Hochglanz-App.
-   Große Flächen, kräftige Farben, alles mit Handschuh bedienbar.
+   Gemeinsames Aussehen für beide Seiten. Richtung „Verlag" (gewählt 14.08.2026).
+
+   Grundgedanke: warmes Papier, Serifenschrift für die Anrede, eine einzige
+   Farbe. Die Anmutung eines guten Hotels oder einer Kanzlei — nicht die
+   einer App. Zurückhaltung ist hier das, was hochwertig wirkt.
+
+   Schrift: Georgia für alles Große (auf jedem Handy vorhanden, ruft nichts
+   im Internet ab), die Systemschrift für den Fließtext. Zwei, nie mehr.
+   Archivo Black bewusst NICHT — das ist die Schrift von Feierabend,
+   diese Seite gehört dem Betrieb.
 --------------------------------------------------------------------------- */
 
 :root {
-  --tinte: #14161a;
-  --grau: #5c626b;
-  --hellgrau: #8b9199;
-  --linie: #d5d8dc;
-  --papier: #ffffff;
-  --flaeche: #f4f2ee;
-  --marke: #1c5d99;
-  --gut: #1d7a3e;
-  --gut-hell: #eaf5ed;
-  --schlecht: #b3261e;
-  --schlecht-hell: #fbeceb;
-  --radius: 4px;
+  --tinte: #211e1a;
+  --grau: #5c554b;
+  --hellgrau: #9a9186;
+  --linie: #d9cfbe;
+  --regel: #d3c9b8;
+  --papier: #fffdf8;
+  --flaeche: #f5f1e9;
+  --marke: #8c3a2b;          /* wird je Betrieb überschrieben */
+  --marke-tief: #7a3125;     /* leitet sich unten von --marke ab */
+  --gut: #4a6b3f;
+  --schlecht: #8c3a2b;
+  --radius: 2px;
+
+  --schwung: cubic-bezier(0.23, 1, 0.32, 1);
+  --titel: Georgia, "Times New Roman", "Iowan Old Style", serif;
+}
+
+/* Die dunklere Fassung der Betriebsfarbe rechnet sich selbst aus –
+   so passt jeder Betrieb, ohne dass zwei Farben eingetragen werden müssen. */
+@supports (color: color-mix(in srgb, #000 50%, #fff)) {
+  :root { --marke-tief: color-mix(in srgb, var(--marke) 76%, #000); }
 }
 
 * { box-sizing: border-box; }
@@ -25,9 +41,9 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
-  font-size: 17px;
-  line-height: 1.5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
   color: var(--tinte);
   background: var(--flaeche);
   -webkit-font-smoothing: antialiased;
@@ -38,85 +54,128 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   background: var(--papier);
-  border-left: 1px solid var(--linie);
-  border-right: 1px solid var(--linie);
+  box-shadow: 0 0 0 1px rgba(33, 30, 26, .05), 0 1px 30px rgba(33, 30, 26, .05);
 }
 
-/* --- Kopfzeile mit Firmenbalken ------------------------------------------ */
+/* --- Briefkopf: Name in Kapitälchen über einer feinen Linie -------------- */
 
-.kopf {
-  border-top: 6px solid var(--marke);
-  padding: 20px 22px 18px;
-  border-bottom: 1px solid var(--linie);
-}
+.kopf { padding: 44px 28px 0; }
 
 .kopf .firma {
-  font-size: 19px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
-  margin: 0;
-}
-
-.kopf .zusatz {
-  font-size: 13px;
-  color: var(--grau);
-  margin: 3px 0 0;
-}
-
-.inhalt { padding: 24px 22px 40px; }
-
-/* --- Text ---------------------------------------------------------------- */
-
-h1 {
-  font-size: 25px;
-  line-height: 1.25;
-  letter-spacing: -0.4px;
-  margin: 0 0 10px;
-}
-
-h2 {
-  font-size: 14px;
+  font-family: var(--titel);
+  font-size: 13.5px;
+  letter-spacing: 2.6px;
   text-transform: uppercase;
-  letter-spacing: 0.9px;
   color: var(--marke);
   margin: 0 0 12px;
 }
 
-p { margin: 0 0 14px; }
-.leise { color: var(--grau); font-size: 15px; }
-.winzig { color: var(--hellgrau); font-size: 12.5px; line-height: 1.45; }
+.kopf .zusatz {
+  font-size: 11.5px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--hellgrau);
+  margin: 0 0 12px;
+}
 
-/* --- Große Antwortflächen (Daumen) --------------------------------------- */
+.kopf::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: var(--regel);
+}
 
-.daumen-paar { display: grid; gap: 12px; margin: 26px 0 8px; }
+.inhalt { padding: 34px 28px 56px; }
+
+/* --- Text ---------------------------------------------------------------- */
+
+h1 {
+  font-family: var(--titel);
+  font-size: 33px;
+  line-height: 1.28;
+  letter-spacing: -0.3px;
+  font-weight: 400;
+  margin: 0 0 16px;
+}
+
+h2 {
+  font-family: var(--titel);
+  font-size: 12.5px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 2.2px;
+  color: var(--marke);
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--regel);
+}
+
+p { margin: 0 0 16px; }
+.leise { color: var(--grau); font-size: 16px; }
+.winzig {
+  font-family: var(--titel);
+  font-style: italic;
+  color: var(--hellgrau);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+/* --- Die zwei Antworten -------------------------------------------------- */
+
+.daumen-paar { display: grid; gap: 11px; margin: 34px 0 0; }
 
 .daumen {
   display: flex;
   align-items: center;
   gap: 16px;
   width: 100%;
-  padding: 20px 20px;
-  border: 2px solid var(--linie);
+  padding: 19px 20px;
+  border: 1px solid var(--linie);
   border-radius: var(--radius);
   background: var(--papier);
   font: inherit;
+  font-size: 16.5px;
+  font-weight: 600;
+  color: var(--tinte);
   text-align: left;
   cursor: pointer;
-  transition: border-color .12s, background .12s, transform .06s;
+  transition: border-color 160ms ease, transform 110ms var(--schwung);
 }
 
 .daumen:active { transform: scale(.985); }
 
-.daumen .zeichen { font-size: 34px; line-height: 1; }
-.daumen .wort { font-size: 18px; font-weight: 700; display: block; }
-.daumen .neben { font-size: 14px; color: var(--grau); display: block; margin-top: 1px; }
+/* Die zufriedene Antwort ist die gefüllte — sie ist der Normalfall. */
+.daumen.ja {
+  background: var(--marke);
+  border-color: var(--marke-tief);
+  color: #fdf9f3;
+}
+.daumen.ja .neben { color: rgba(253, 249, 243, .72); }
+.daumen.ja .zeichen { color: rgba(253, 249, 243, .9); }
 
-.daumen.ja:hover, .daumen.ja:focus-visible {
-  border-color: var(--gut); background: var(--gut-hell); outline: none;
+.daumen .zeichen {
+  flex: 0 0 auto;
+  width: 22px; height: 22px;
+  display: block;
+  color: var(--hellgrau);
 }
-.daumen.nein:hover, .daumen.nein:focus-visible {
-  border-color: var(--schlecht); background: var(--schlecht-hell); outline: none;
+.daumen .zeichen svg { width: 100%; height: 100%; display: block; }
+
+.daumen .wort { display: block; letter-spacing: -0.1px; }
+.daumen .neben {
+  display: block;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--hellgrau);
+  margin-top: 2px;
 }
+
+@media (hover: hover) and (pointer: fine) {
+  .daumen.nein:hover { border-color: var(--grau); }
+  .daumen.ja:hover { background: var(--marke-tief); }
+}
+
+.daumen:focus-visible { outline: 2px solid var(--tinte); outline-offset: 2px; }
 
 /* --- Knöpfe -------------------------------------------------------------- */
 
@@ -126,25 +185,37 @@ p { margin: 0 0 14px; }
   justify-content: center;
   gap: 9px;
   width: 100%;
-  padding: 17px 20px;
-  border: none;
+  padding: 18px 20px;
+  border: 1px solid var(--marke-tief);
   border-radius: var(--radius);
-  background: var(--tinte);
-  color: #fff;
+  background: var(--marke);
+  color: #fdf9f3;
   font: inherit;
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 16.5px;
+  font-weight: 600;
   text-decoration: none;
   cursor: pointer;
-  transition: opacity .12s, transform .06s;
+  transition: background 160ms ease, border-color 160ms ease, transform 110ms var(--schwung);
 }
 
-.knopf:active { transform: scale(.99); }
-.knopf:hover { opacity: .9; }
-.knopf.gross { padding: 20px; font-size: 18px; }
-.knopf.marke { background: var(--marke); }
-.knopf.gut { background: var(--gut); }
-.knopf.stumm { background: transparent; color: var(--grau); border: 1.5px solid var(--linie); font-weight: 600; }
+.knopf:active { transform: scale(.985); }
+@media (hover: hover) and (pointer: fine) {
+  .knopf:hover { background: var(--marke-tief); }
+}
+
+.knopf.gross { padding: 20px; font-size: 17px; }
+.knopf.marke { background: var(--marke); border-color: var(--marke-tief); }
+.knopf.gut { background: var(--gut); border-color: #3a5531; }
+.knopf.gut:hover { background: #3a5531; }
+
+.knopf.stumm {
+  background: var(--papier);
+  color: var(--grau);
+  border-color: var(--linie);
+}
+.knopf.stumm:hover { background: var(--flaeche); border-color: var(--grau); }
+
+.knopf[disabled] { opacity: .5; cursor: default; transform: none; }
 
 .knopf-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
@@ -152,37 +223,37 @@ p { margin: 0 0 14px; }
 
 label {
   display: block;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--grau);
-  margin: 0 0 6px;
+  letter-spacing: 1.3px;
+  color: var(--hellgrau);
+  margin: 0 0 8px;
 }
 
 input[type="text"], input[type="tel"], textarea, select {
   width: 100%;
-  padding: 14px 14px;
-  border: 1.5px solid var(--linie);
+  padding: 15px 14px;
+  border: 1px solid var(--linie);
   border-radius: var(--radius);
-  background: var(--papier);
+  background: #fffefb;
   font: inherit;
-  font-size: 17px;
+  font-size: 16.5px;
   color: var(--tinte);
+  transition: border-color 160ms ease;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--marke);
-  box-shadow: 0 0 0 3px rgba(28, 93, 153, .14);
+  border-color: var(--tinte);
 }
 
-textarea { min-height: 120px; resize: vertical; }
+textarea { min-height: 130px; resize: vertical; line-height: 1.55; }
 
-.feld { margin-bottom: 16px; }
+.feld { margin-bottom: 20px; }
 .feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* --- Liste --------------------------------------------------------------- */
+/* --- Liste (die Tagesliste des Betriebs) --------------------------------- */
 
 .liste { margin: 0; padding: 0; list-style: none; }
 
@@ -190,65 +261,110 @@ textarea { min-height: 120px; resize: vertical; }
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 15px 4px;
-  border-bottom: 1px solid var(--linie);
+  padding: 17px 2px;
+  border-bottom: 1px solid var(--regel);
 }
 
-.zeile:first-child { border-top: 1px solid var(--linie); }
+.zeile:first-child { border-top: 1px solid var(--regel); }
 
 .zeile .wer { flex: 1; min-width: 0; }
-.zeile .name { font-weight: 700; font-size: 17px; }
-.zeile .details { font-size: 13.5px; color: var(--grau); margin-top: 1px; }
+.zeile .name { font-weight: 600; font-size: 16.5px; }
+.zeile .details { font-size: 13.5px; color: var(--hellgrau); margin-top: 1px; }
 
 .marke-punkt {
-  width: 10px; height: 10px; border-radius: 50%;
+  width: 8px; height: 8px; border-radius: 50%;
   background: var(--linie); flex: 0 0 auto;
 }
-.marke-punkt.offen { background: #d9a300; }
+.marke-punkt.offen { background: #b08415; }
 .marke-punkt.fertig { background: var(--gut); }
 
 .mini {
-  padding: 9px 13px;
-  border: 1.5px solid var(--linie);
+  padding: 10px 15px;
+  border: 1px solid var(--linie);
   border-radius: var(--radius);
   background: var(--papier);
   font: inherit;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
+  color: var(--tinte);
   cursor: pointer;
   white-space: nowrap;
+  transition: border-color 160ms ease, transform 110ms var(--schwung);
 }
-.mini:hover { border-color: var(--tinte); }
-.mini.weg { border: none; color: var(--hellgrau); font-weight: 400; padding: 9px 6px; }
+.mini:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) {
+  .mini:hover { border-color: var(--grau); }
+}
+.mini.weg { border-color: transparent; color: var(--hellgrau); font-weight: 400; padding: 10px 6px; }
+.mini.weg:hover { border-color: transparent; color: var(--tinte); }
 
 /* --- Kästen -------------------------------------------------------------- */
 
 .kasten {
   background: var(--flaeche);
-  border-left: 3px solid var(--marke);
-  padding: 15px 17px;
-  margin: 0 0 20px;
+  border-left: 2px solid var(--marke);
+  padding: 16px 18px;
+  margin: 0 0 22px;
   font-size: 15px;
 }
 
-.kasten.warnung { border-left-color: #d9a300; }
+.kasten.warnung { border-left-color: #b08415; }
 
 .leer {
   text-align: center;
-  padding: 46px 20px;
+  padding: 54px 20px;
   color: var(--hellgrau);
+  font-family: var(--titel);
+  font-style: italic;
+  font-size: 16px;
 }
 
-.trenner { height: 1px; background: var(--linie); margin: 26px 0; border: 0; }
+.trenner { height: 1px; background: var(--regel); margin: 32px 0; border: 0; }
 
-.zahlen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--linie); border: 1px solid var(--linie); margin-bottom: 22px; }
-.zahlen div { background: var(--papier); padding: 14px 10px; text-align: center; }
-.zahlen .z { font-size: 26px; font-weight: 700; line-height: 1.1; }
-.zahlen .b { font-size: 12px; color: var(--grau); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+/* --- Zahlenreihe --------------------------------------------------------- */
+
+.zahlen {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--regel);
+  margin-bottom: 26px;
+}
+.zahlen div {
+  background: var(--papier);
+  padding: 17px 10px;
+  text-align: center;
+  border-right: 1px solid var(--regel);
+}
+.zahlen div:last-child { border-right: 0; }
+.zahlen .z {
+  font-family: var(--titel);
+  font-size: 29px;
+  line-height: 1.1;
+  font-weight: 400;
+}
+.zahlen .b {
+  font-size: 10.5px; color: var(--hellgrau);
+  text-transform: uppercase; letter-spacing: 1.3px; margin-top: 5px;
+}
 
 .versteckt { display: none !important; }
 
+/* --- Schritte sanft einblenden ------------------------------------------- */
+
+.inhalt > section { animation: auftauchen 280ms var(--schwung) both; }
+
+@keyframes auftauchen {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inhalt > section { animation: none; }
+  .daumen:active, .knopf:active, .mini:active { transform: none; }
+}
+
 @media (max-width: 420px) {
   .feld-paar, .knopf-paar { grid-template-columns: 1fr; }
-  h1 { font-size: 22px; }
+  h1 { font-size: 28px; }
+  .kopf { padding: 38px 22px 0; }
+  .inhalt { padding: 30px 22px 46px; }
 }

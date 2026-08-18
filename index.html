@@ -5,17 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Rückmeldungen</title>
-<link rel="stylesheet" href="stil.css">
 <style>
-  .kopfleiste { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-  .kopfleiste select { width:auto; padding:8px 10px; font-size:14px; font-weight:700; border-radius:4px; }
-  .abschnitt { margin-bottom:30px; }
-  .vorschau { background:var(--flaeche); border-left:3px solid var(--linie); padding:13px 15px; font-size:14.5px; line-height:1.5; margin:0 0 18px; white-space:pre-wrap; }
-  details.einstellungen { margin-top:34px; border-top:1px solid var(--linie); padding-top:18px; }
-  details.einstellungen summary { cursor:pointer; font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--grau); }
-  details.einstellungen .inner { padding-top:16px; }
-  .mehr-schalter { display:block; width:100%; text-align:left; background:none; border:none; color:var(--marke); font:inherit; font-size:14px; font-weight:600; cursor:pointer; padding:2px 0 4px; margin:0 0 16px; }
-  .mehr-schalter:hover { text-decoration:underline; }
+/* ---------------------------------------------------------------------------
+   Auftritt Feierabend: Schwarz, Ziegelrot, Weiß, Grau. Zwei Schriften.
+   Keine runden Ecken, keine Schatten, keine dritte Farbe.
+   Die Schrift liegt als Datei daneben - es wird nichts bei Google abgerufen.
+--------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Archivo Black";
+  src: url("ArchivoBlack-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  --schwarz: #111110;
+  --rot: #cf3a2c;
+  --grau: #6f6c66;
+  --hell: #a8a49c;
+  --linie: #e7e3dc;
+  --papier: #fffefb;
+  --display: "Archivo Black", "Arial Black", sans-serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--schwarz);
+  background: #f3f1ec;
+  -webkit-font-smoothing: antialiased;
+}
+
+.blatt {
+  max-width: 520px; margin: 0 auto; min-height: 100vh;
+  background: var(--papier);
+  box-shadow: 0 0 0 1px rgba(17, 17, 16, .04), 0 1px 30px rgba(17, 17, 16, .05);
+}
+
+/* --- Kopf: schwarzer Balken mit dem Zeichen ------------------------------- */
+
+.kopf {
+  background: var(--schwarz);
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mark { display: flex; align-items: center; gap: 11px; }
+.mark .z { flex: 0 0 auto; }
+.mark .kreis { width: 26px; height: 13px; background: var(--rot); border-radius: 999px 999px 0 0; }
+.mark .balken { width: 26px; height: 3.25px; background: #fff; margin-top: 2.2px; }
+.mark .wort {
+  font-family: var(--display);
+  font-size: 19px;
+  letter-spacing: -0.8px;
+  line-height: 1;
+  color: #fff;
+}
+
+.kopf .werkzeug {
+  font-size: 9.5px;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  color: #8d8a83;
+  text-align: right;
+  line-height: 1.5;
+}
+
+#betrieb-wahl {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  background: transparent;
+  border: 1px solid #43413d;
+  padding: 6px 8px;
+  border-radius: 0;
+}
+
+.inhalt { padding: 40px 26px 56px; }
+
+/* --- Der eine Knopf ------------------------------------------------------- */
+
+h1 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 30px;
+  letter-spacing: -1.1px;
+  line-height: 1.1;
+  margin-bottom: 28px;
+}
+
+label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.6px;
+  color: var(--grau);
+  margin-bottom: 7px;
+}
+
+input[type="text"], input[type="tel"] {
+  width: 100%;
+  font: inherit;
+  font-size: 18px;
+  color: var(--schwarz);
+  background: #fff;
+  border: 1px solid var(--linie);
+  border-radius: 0;
+  padding: 15px 14px;
+}
+
+input::placeholder { color: var(--hell); }
+
+input:focus { outline: none; border-color: var(--schwarz); }
+
+.feld { margin-bottom: 14px; }
+.feld-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Archivo Black bleibt der Überschrift vorbehalten. Auf einem Knopf wirkt
+   eine Plakatschrift laut statt hochwertig – dafür die normale Schrift,
+   nur kräftig gesetzt. */
+.knopf {
+  display: block;
+  width: 100%;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.1px;
+  color: #fff;
+  background: var(--rot);
+  border: 0;
+  border-radius: 0;
+  padding: 20px 18px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 160ms ease, transform 110ms cubic-bezier(.23,1,.32,1);
+}
+
+.knopf:active { transform: scale(.988); }
+
+.knopf:hover { background: #b52f22; }
+.knopf:active { background: #9d2a1e; }
+
+.knopf.schwarz { background: var(--schwarz); }
+.knopf.schwarz:hover { background: #35322d; }
+
+.knopf.stumm {
+  background: #fff;
+  color: var(--schwarz);
+  border: 1px solid var(--linie);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 13px 14px;
+}
+.knopf.stumm:hover { background: #fff; border-color: var(--schwarz); }
+
+.knopf-paar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.notiz { font-size: 13.5px; line-height: 1.5; color: var(--grau); margin-top: 11px; }
+
+/* --- Aufklapper ----------------------------------------------------------- */
+
+.mehr {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--linie);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--schwarz);
+  cursor: pointer;
+  padding: 15px 0;
+}
+.mehr:hover { color: var(--grau); }
+.mehr .plus { color: var(--hell); margin-right: 9px; font-weight: 400; }
+
+/* --- Zahlenzeile ---------------------------------------------------------- */
+
+.zahlen {
+  border-top: 2px solid var(--schwarz);
+  padding-top: 12px;
+  margin: 34px 0 26px;
+  font-size: 13.5px;
+  color: var(--grau);
+}
+.zahlen b { font-family: var(--display); font-weight: 400; font-size: 17px; color: var(--schwarz); }
+.zahlen span + span::before { content: "·"; margin: 0 9px; color: var(--hell); }
+
+/* --- Listen --------------------------------------------------------------- */
+
+.abschnitt { margin-bottom: 34px; }
+
+h2 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: -0.2px;
+  margin-bottom: 13px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--schwarz);
+}
+
+.vorschau {
+  border-left: 4px solid var(--rot);
+  padding: 12px 15px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--grau);
+  white-space: pre-wrap;
+}
+
+.hinweis {
+  border-left: 4px solid var(--schwarz);
+  padding: 12px 15px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: var(--grau);
+}
+
+.liste { list-style: none; }
+
+.zeile {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--linie);
+}
+
+.zeile .punkt { width: 9px; height: 9px; flex: 0 0 auto; background: var(--hell); }
+.zeile .punkt.offen { background: var(--rot); }
+.zeile .punkt.fertig { background: var(--schwarz); }
+
+.zeile .wer { flex: 1; min-width: 0; }
+.zeile .name { font-weight: 700; font-size: 16px; }
+.zeile .details { font-size: 13px; color: var(--grau); }
+
+.mini {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--schwarz);
+  background: #fff;
+  border: 1px solid var(--linie);
+  border-radius: 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mini:hover { border-color: var(--schwarz); }
+.mini.weg { border: 0; color: var(--hell); font-weight: 400; padding: 8px 4px; }
+.mini.weg:hover { color: var(--schwarz); }
+
+/* --- Fuß ------------------------------------------------------------------ */
+
+.fuss { margin-top: 44px; }
+.winzig { font-size: 12.5px; line-height: 1.5; color: var(--hell); }
+
+.versteckt { display: none !important; }
+
+@media (max-width: 400px) {
+  .feld-paar, .knopf-paar { grid-template-columns: 1fr; }
+  h1 { font-size: 26px; }
+}
 </style>
 </head>
 <body>
@@ -23,121 +291,106 @@
 <div class="blatt">
 
   <div class="kopf">
-    <div class="kopfleiste">
-      <div>
-        <p class="firma">Rückmeldungen</p>
-        <p class="zusatz" id="heute">&nbsp;</p>
-      </div>
-      <select id="betrieb-wahl" title="Betrieb"></select>
+    <div class="mark">
+      <div class="z"><div class="kreis"></div><div class="balken"></div></div>
+      <div class="wort">Feierabend</div>
     </div>
+    <div class="werkzeug" id="werkzeug">Rückmeldungen</div>
+    <select id="betrieb-wahl" title="Betrieb" class="versteckt"></select>
   </div>
 
   <div class="inhalt">
 
-    <!-- Zahlen ---------------------------------------------------------- -->
-    <div class="zahlen">
-      <div><div class="z" id="z-offen">0</div><div class="b">zu senden</div></div>
-      <div><div class="z" id="z-unterwegs">0</div><div class="b">unterwegs</div></div>
-      <div><div class="z" id="z-monat">0</div><div class="b">30 Tage</div></div>
-    </div>
-
-    <!-- Neue Baustelle --------------------------------------------------- -->
-    <section class="abschnitt">
-      <h2>Baustelle fertig</h2>
+    <!-- Der eine Knopf --------------------------------------------------- -->
+    <section>
+      <h1>Baustelle fertig?</h1>
 
       <div class="feld">
-        <label for="s-name">Vorname des Kunden (freiwillig)</label>
+        <label for="s-name">Vorname des Kunden <span style="font-weight:400">(freiwillig)</span></label>
         <input type="text" id="s-name" placeholder="Sarah" autocomplete="off">
       </div>
 
-      <button class="knopf gross" id="schnell-whatsapp" style="background:#25a35a;">
-        Kunde per WhatsApp fragen
-      </button>
-      <p class="winzig" style="margin-top:8px">
-        Öffnet WhatsApp mit fertigem Text – du tippst nur auf den Kunden in deiner
-        WhatsApp-Liste. Kein Eintippen der Nummer.
-        <br>Mit Vorname merkt sich das Programm den Kunden und erinnert <b>dich</b>,
-        falls nach ein paar Tagen nichts kommt.
+      <button class="knopf" id="schnell-whatsapp">Kunde per WhatsApp fragen</button>
+
+      <p class="notiz">
+        Öffnet WhatsApp mit fertigem Text – du tippst nur auf den Kunden.
+        Mit Vorname erinnert dich das Programm, falls nichts zurückkommt.
       </p>
+    </section>
 
-      <button type="button" class="mehr-schalter" id="mehr-schalter" style="margin-top:18px">
-        + Kunde ohne WhatsApp? Per SMS senden (oder mit automatischer Erinnerung)
+    <!-- SMS-Weg ----------------------------------------------------------- -->
+    <section style="margin-top:26px">
+      <button type="button" class="mehr" id="mehr-schalter">
+        <span class="plus">+</span>Kunde ohne WhatsApp? Per SMS senden
       </button>
 
-      <div id="mehr-felder" class="versteckt">
+      <div id="mehr-felder" class="versteckt" style="padding-bottom:6px">
         <div class="feld">
           <label for="e-nummer">Handynummer des Kunden</label>
-          <input type="tel" inputmode="tel" id="e-nummer" placeholder="0664 1234567"
-                 autocomplete="off" style="font-size:20px; padding:16px;">
+          <input type="tel" inputmode="tel" id="e-nummer" placeholder="0664 1234567" autocomplete="off">
         </div>
         <div class="feld-paar">
           <div class="feld">
-            <label for="e-name">Vorname (freiwillig)</label>
+            <label for="e-name">Vorname</label>
             <input type="text" id="e-name" placeholder="Sarah" autocomplete="off">
           </div>
           <div class="feld">
-            <label for="e-notiz">Ort / Baustelle (freiwillig)</label>
-            <input type="text" id="e-notiz" placeholder="z. B. Bad Linzer Str." autocomplete="off">
+            <label for="e-notiz">Ort / Baustelle</label>
+            <input type="text" id="e-notiz" placeholder="Bad Linzer Str." autocomplete="off">
           </div>
         </div>
-        <button class="knopf gross" id="eintragen">In die Liste – für SMS und Erinnerung</button>
-        <p class="winzig" id="e-fehler" style="margin-top:10px"></p>
+        <button class="knopf schwarz" id="eintragen">In die Liste</button>
+        <p class="notiz" id="e-fehler"></p>
       </div>
     </section>
 
-    <!-- Zu senden -------------------------------------------------------- -->
-    <section class="abschnitt" id="block-offen">
+    <!-- Zahlen ------------------------------------------------------------ -->
+    <div class="zahlen versteckt" id="zahlen">
+      <span><b id="z-offen">0</b> zu senden</span><span><b id="z-unterwegs">0</b> unterwegs</span><span><b id="z-monat">0</b> in 30 Tagen</span>
+    </div>
+
+    <!-- Zu senden --------------------------------------------------------- -->
+    <section class="abschnitt versteckt" id="block-offen">
       <h2>Jetzt senden</h2>
       <p class="vorschau" id="vorschau"></p>
       <ul class="liste" id="liste-offen"></ul>
     </section>
 
-    <!-- Erinnerung ------------------------------------------------------- -->
+    <!-- Erinnerung -------------------------------------------------------- -->
     <section class="abschnitt versteckt" id="block-erinnerung">
       <h2>Erinnerung fällig</h2>
-      <div class="kasten warnung">
+      <div class="hinweis">
         Vor über 4 Tagen gesendet, keine Reaktion. Eine einzige Erinnerung – danach
         nicht mehr nachfassen.
       </div>
       <ul class="liste" id="liste-erinnerung"></ul>
     </section>
 
-    <!-- Unterwegs -------------------------------------------------------- -->
+    <!-- Unterwegs --------------------------------------------------------- -->
     <section class="abschnitt versteckt" id="block-unterwegs">
       <h2>Unterwegs</h2>
       <ul class="liste" id="liste-unterwegs"></ul>
     </section>
 
-    <!-- Leerzustand ------------------------------------------------------ -->
-    <div class="leer versteckt" id="leerhinweis">
-      Noch nichts eingetragen.<br>Trag die erste fertige Baustelle oben ein.
-    </div>
+    <!-- Fuß: QR und Einstellungen ----------------------------------------- -->
+    <div class="fuss">
 
-    <!-- QR-Code ---------------------------------------------------------- -->
-    <section class="abschnitt">
-      <button type="button" class="mehr-schalter" id="qr-schalter">
-        + QR-Code zum Aushängen anzeigen
+      <button type="button" class="mehr" id="qr-schalter">
+        <span class="plus">+</span>QR-Code zum Aushängen
       </button>
-      <div id="qr-box" class="versteckt" style="text-align:center; padding:8px 0 4px;">
-        <div id="qr-bild" style="display:inline-block; background:#fff; padding:12px; border:1px solid var(--linie); border-radius:4px;"></div>
-        <p class="leise" style="font-size:14px; margin:14px 0 4px;">
-          Für Rechnung, Firmenauto oder Visitenkarte. Wer scannt, kommt direkt zur Rückmelde-Seite.
-        </p>
-        <p class="winzig" id="qr-link" style="word-break:break-all;"></p>
+      <div id="qr-box" class="versteckt" style="text-align:center; padding:4px 0 18px;">
+        <div id="qr-bild" style="display:inline-block; padding:12px; border:1.5px solid var(--linie);"></div>
+        <p class="notiz">Für Rechnung, Firmenauto oder Visitenkarte.</p>
+        <p class="winzig" id="qr-link" style="word-break:break-all; margin-top:6px;"></p>
       </div>
-    </section>
 
-    <!-- Einstellungen ---------------------------------------------------- -->
-    <details class="einstellungen">
-      <summary>Einstellungen</summary>
-      <div class="inner">
+      <button type="button" class="mehr" id="einst-schalter">
+        <span class="plus">+</span>Einstellungen
+      </button>
+      <div id="einst-box" class="versteckt" style="padding:4px 0 18px;">
         <div class="feld">
           <label for="basis">Adresse der Kundenseite</label>
           <input type="text" id="basis" placeholder="https://…/k.html">
-          <p class="winzig" style="margin-top:6px">
-            Diese Adresse bekommt der Kunde in der Nachricht. Sie muss im Internet
-            erreichbar sein, sonst kann sein Handy die Seite nicht öffnen.
-          </p>
         </div>
         <div class="knopf-paar">
           <button class="knopf stumm" id="basis-speichern">Adresse merken</button>
@@ -148,7 +401,9 @@
           Nichts wird an einen Server geschickt.
         </p>
       </div>
-    </details>
+
+      <p class="winzig" id="heute" style="border-top:1px solid var(--linie); padding-top:16px;"></p>
+    </div>
 
   </div>
 </div>
@@ -266,7 +521,7 @@
     li.className = "zeile";
 
     var punkt = document.createElement("span");
-    punkt.className = "marke-punkt " + (art === "offen" ? "" : art === "erinnerung" ? "offen" : "fertig");
+    punkt.className = "punkt " + (art === "unterwegs" ? "fertig" : "offen");
     li.appendChild(punkt);
 
     var wer = document.createElement("div");
@@ -328,12 +583,17 @@
     var unterwegs = meine.filter(function (e) {
       return e.gesendet && (e.erinnert || tageSeit(e.gesendet) < ERINNERUNG_NACH_TAGEN);
     });
+    var monat = meine.filter(function (e) {
+      return e.gesendet && tageSeit(e.gesendet) < 30;
+    });
 
     document.getElementById("z-offen").textContent = offen.length;
     document.getElementById("z-unterwegs").textContent = unterwegs.length + erinnerung.length;
-    document.getElementById("z-monat").textContent = meine.filter(function (e) {
-      return e.gesendet && tageSeit(e.gesendet) < 30;
-    }).length;
+    document.getElementById("z-monat").textContent = monat.length;
+
+    // Die Zahlenzeile erscheint erst, wenn es etwas zu zählen gibt.
+    // Drei Nullen sagen nichts und machen die Seite nur voll.
+    document.getElementById("zahlen").classList.toggle("versteckt", meine.length === 0);
 
     fuelle("liste-offen", offen, "offen");
     fuelle("liste-erinnerung", erinnerung, "erinnerung");
@@ -342,7 +602,6 @@
     document.getElementById("block-offen").classList.toggle("versteckt", offen.length === 0);
     document.getElementById("block-erinnerung").classList.toggle("versteckt", erinnerung.length === 0);
     document.getElementById("block-unterwegs").classList.toggle("versteckt", unterwegs.length === 0);
-    document.getElementById("leerhinweis").classList.toggle("versteckt", meine.length !== 0);
 
     if (offen.length) {
       document.getElementById("vorschau").textContent = nachricht(offen[0]);
@@ -366,7 +625,10 @@
       s.appendChild(o);
     });
     s.value = kuerzel;
-    s.style.display = Object.keys(BETRIEBE).length > 1 ? "" : "none";
+    var mehrere = Object.keys(BETRIEBE).length > 1;
+    s.classList.toggle("versteckt", !mehrere);
+    // Bei einem einzigen Betrieb steht sein Name statt der Auswahl im Kopf.
+    if (!mehrere) document.getElementById("werkzeug").textContent = betrieb().name;
   }
 
   /* --- Bedienung ---------------------------------------------------------- */
@@ -407,9 +669,8 @@
 
     // Mit Vorname: Kunde wird gemerkt, damit die Erinnerung an Hans möglich ist.
     // Ohne Vorname: einfach abschicken, ohne Spur.
-    var e = { vorname: name, nummer: "" };
     if (name) {
-      e = {
+      eintraege.push({
         id: Date.now() + "-" + Math.random().toString(36).slice(2, 7),
         betrieb: kuerzel,
         vorname: name,
@@ -418,8 +679,7 @@
         angelegt: Date.now(),
         gesendet: Date.now(),   // gilt sofort als geschickt → Erinnerung läuft
         erinnert: null,
-      };
-      eintraege.push(e);
+      });
       sichern();
       document.getElementById("s-name").value = "";
       zeichne();
@@ -429,13 +689,21 @@
     window.location.href = "whatsapp://send?text=" + encodeURIComponent(text);
   });
 
-  /* Aufklappen des SMS-/Erinnerungs-Wegs */
-  document.getElementById("mehr-schalter").addEventListener("click", function () {
-    var felder = document.getElementById("mehr-felder");
-    var auf = felder.classList.toggle("versteckt") === false;
-    this.style.display = "none";
-    if (auf) document.getElementById("e-nummer").focus();
-  });
+  /* Aufklappen: gemeinsamer Schalter für SMS, QR und Einstellungen */
+  function schalter(schalterId, boxId, aufText, zuText, beimOeffnen) {
+    var s = document.getElementById(schalterId);
+    s.addEventListener("click", function () {
+      var auf = document.getElementById(boxId).classList.toggle("versteckt") === false;
+      s.innerHTML = '<span class="plus">' + (auf ? "–" : "+") + "</span>" + (auf ? aufText : zuText);
+      if (auf && beimOeffnen) beimOeffnen();
+    });
+  }
+
+  schalter("mehr-schalter", "mehr-felder",
+    "Zuklappen", "Kunde ohne WhatsApp? Per SMS senden",
+    function () { document.getElementById("e-nummer").focus(); });
+
+  schalter("einst-schalter", "einst-box", "Einstellungen", "Einstellungen");
 
   /* QR-Code zum Aushängen */
   var qrErzeugt = false;
@@ -446,6 +714,7 @@
     if (!box.classList.contains("versteckt")) qrErzeugen();
   }
   function qrErzeugen() {
+    if (qrErzeugt) return;
     var link = basisAdresse() + "#" + kuerzel;
     new QRCode(document.getElementById("qr-bild"), {
       text: link, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M,
@@ -453,17 +722,11 @@
     document.getElementById("qr-link").textContent = link;
     qrErzeugt = true;
   }
-  document.getElementById("qr-schalter").addEventListener("click", function () {
-    var box = document.getElementById("qr-box");
-    var auf = box.classList.toggle("versteckt") === false;
-    if (auf && !qrErzeugt) qrErzeugen();
-    this.textContent = auf ? "– QR-Code ausblenden" : "+ QR-Code zum Aushängen anzeigen";
-  });
+  schalter("qr-schalter", "qr-box", "QR-Code ausblenden", "QR-Code zum Aushängen", qrErzeugen);
 
   document.getElementById("betrieb-wahl").addEventListener("change", function () {
     kuerzel = this.value;
     localStorage.setItem(SPEICHER_BETRIEB, kuerzel);
-    document.documentElement.style.setProperty("--marke", betrieb().farbe || "#1c5d99");
     qrZuruecksetzen();
     zeichne();
   });
@@ -475,6 +738,7 @@
     this.textContent = "Gemerkt";
     var k = this;
     setTimeout(function () { k.textContent = "Adresse merken"; }, 1400);
+    qrZuruecksetzen();
     zeichne();
   });
 
@@ -487,9 +751,8 @@
 
   /* --- Start -------------------------------------------------------------- */
   document.getElementById("heute").textContent =
-    new Date().toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long" });
+    new Date().toLocaleDateString("de-AT", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   document.getElementById("basis").value = localStorage.getItem(SPEICHER_BASIS) || "";
-  document.documentElement.style.setProperty("--marke", betrieb().farbe || "#1c5d99");
   betriebeFuellen();
   zeichne();
 })();

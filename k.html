@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Kurze Rückmeldung</title>
-<link rel="stylesheet" href="stil.css">
+<link rel="stylesheet" href="stil.css?stand=2026-08-14d">
 </head>
 <body>
 
@@ -27,7 +27,13 @@
 
       <div class="daumen-paar">
         <button class="daumen ja" id="knopf-ja">
-          <span class="zeichen">👍</span>
+          <span class="zeichen" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 10v12"/>
+              <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z"/>
+            </svg>
+          </span>
           <span>
             <span class="wort">Ja, alles bestens</span>
             <span class="neben">Ich bin zufrieden</span>
@@ -35,7 +41,13 @@
         </button>
 
         <button class="daumen nein" id="knopf-nein">
-          <span class="zeichen">👎</span>
+          <span class="zeichen" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 14V2"/>
+              <path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z"/>
+            </svg>
+          </span>
           <span>
             <span class="wort">Es gab ein Problem</span>
             <span class="neben">Etwas passt noch nicht</span>
@@ -52,12 +64,11 @@
     <section id="schritt-ja" class="versteckt">
       <h1>Das freut uns.</h1>
       <p class="leise" id="ja-text">
-        Danke für Ihr Vertrauen. Wenn Sie zwei Minuten übrig haben:
-        Eine kurze Bewertung auf Google hilft uns wirklich weiter –
-        und anderen bei der Suche nach einem verlässlichen Betrieb.
+        Danke für Ihr Vertrauen. Wenn Sie zwei Minuten übrig haben: Schildern Sie Ihre Erfahrung öffentlich –
+        ehrlich, so wie es war. Das hilft anderen bei der Suche nach einem Betrieb.
       </p>
 
-      <a class="knopf gross gut" id="google-knopf" href="#" target="_blank" rel="noopener">
+      <a class="knopf gross" id="google-knopf" href="#" target="_blank" rel="noopener">
         Bewertung schreiben
       </a>
 
@@ -95,14 +106,28 @@
     <!-- 3) Danke --------------------------------------------------------- -->
     <section id="schritt-danke" class="versteckt">
       <h1>Danke, ist angekommen.</h1>
-      <p class="leise" id="danke-text">Der Betrieb hat Ihre Nachricht erhalten und meldet sich.</p>
-      <p class="winzig">Sie können dieses Fenster jetzt schließen.</p>
+      <p class="leise" id="danke-text">Der Betrieb hat Ihre Nachricht erhalten und meldet sich bei Ihnen.</p>
+
+      <hr class="trenner">
+
+      <p class="leise">
+        Unabhängig davon: Wenn Sie zwei Minuten übrig haben: Schildern Sie Ihre Erfahrung öffentlich –
+        ehrlich, so wie es war. Das hilft anderen bei der Suche nach einem Betrieb.
+      </p>
+
+      <a class="knopf gross" id="google-knopf-2" href="#" target="_blank" rel="noopener">
+        Bewertung schreiben
+      </a>
+
+      <p class="winzig" style="margin-top:16px">
+        Sie können dieses Fenster auch einfach schließen. Alles gut.
+      </p>
     </section>
 
   </div>
 </div>
 
-<script src="betriebe.js"></script>
+<script src="betriebe.js?stand=2026-08-14d"></script>
 <script>
 (function () {
   "use strict";
@@ -119,7 +144,7 @@
   var gewerk = GEWERKE[betrieb.gewerk] || GEWERKE.installateur;
 
   /* --- Seite mit den Betriebsdaten füllen -------------------------------- */
-  document.documentElement.style.setProperty("--marke", betrieb.farbe || "#1c5d99");
+  document.documentElement.style.setProperty("--marke", betrieb.farbe || "#8c3a2b");
   document.getElementById("firma").textContent = betrieb.name;
   document.getElementById("zusatz").textContent = "Kurze Rückmeldung – dauert 10 Sekunden";
   document.title = betrieb.name + " – kurze Rückmeldung";
@@ -131,8 +156,10 @@
     "hier ist " + betrieb.chef + " von " + betrieb.name + ". " +
     "Wir haben " + gewerk.arbeit + " bei Ihnen abgeschlossen. Hat alles gepasst?";
 
-  var g = document.getElementById("google-knopf");
-  if (betrieb.googleLink) g.href = betrieb.googleLink;
+  if (betrieb.googleLink) {
+    document.getElementById("google-knopf").href = betrieb.googleLink;
+    document.getElementById("google-knopf-2").href = betrieb.googleLink;
+  }
 
   /* --- Umschalten zwischen den Schritten --------------------------------- */
   var schritte = ["frage", "ja", "nein", "danke"];

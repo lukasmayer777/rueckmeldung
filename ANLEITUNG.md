@@ -19,9 +19,16 @@ Zwei Seiten, mehr nicht. Kein Server, keine Datenbank, keine laufenden Kosten.
 3. Du drückst einen davon → dein normales Nachrichtenfenster geht auf, **Text und Empfänger
    sind schon ausgefüllt**. Du drückst nur noch senden.
 4. Der Kunde bekommt einen kurzen Link. Er tippt drauf und sieht zwei große Flächen:
-   **👍 Ja, alles bestens** und **👎 Es gab ein Problem**.
-5. **Daumen hoch** → Seite mit dem Knopf zu Google.
-   **Daumen runter** → Textfeld, geht direkt an den Betrieb. **Kein Google-Link.**
+   **Ja, alles bestens** und **Es gab ein Problem**.
+5. **Daumen hoch** → Dank, darunter der Knopf zu Google.
+   **Daumen runter** → Textfeld, geht direkt an den Betrieb – und danach **derselbe Knopf
+   zu Google**, in derselben Farbe und wortgleich.
+
+   ⚠ **Das ist Absicht und darf nicht geändert werden.** Google verbietet seit April 2026,
+   dass ein Betrieb nur die zufriedenen Kunden zur Bewertung schickt und die unzufriedenen
+   abfangt. Wer das macht, riskiert die Löschung aller Bewertungen und im Wiederholungsfall
+   des ganzen Profils. Der Betrieb erfährt den Ärger trotzdem zuerst und kann ihn
+   geradebiegen – aussortiert wird aber niemand.
 6. Nach **4 Tagen** ohne Reaktion taucht der Eintrag unter **Erinnerung fällig** auf.
    Eine einzige Erinnerung – danach nicht mehr.
 
@@ -54,7 +61,7 @@ h: {
   name: "Huber Installationen",
   chef: "Hans",
   gewerk: "installateur",
-  farbe: "#1c5d99",
+  farbe: "#8c3a2b",   // gedeckt waehlen, grelle Farben wirken billig
   googleLink: "https://g.page/r/XXXXXXXX/review",
   meldeSchluessel: "",
 },

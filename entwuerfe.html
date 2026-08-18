@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drei Richtungen – Kundenseite</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #2a2c30; font-family: system-ui, "Segoe UI", sans-serif; }
+
+  /* --- Umschalter oben --------------------------------------------------- */
+  .waehler {
+    position: sticky; top: 0; z-index: 10;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    background: #1a1c1f; border-bottom: 1px solid #000;
+  }
+  .waehler button {
+    appearance: none; border: none; background: none; cursor: pointer;
+    padding: 15px 6px 13px; color: #8b9099;
+    font: inherit; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 3px solid transparent;
+  }
+  .waehler button.an { color: #fff; border-bottom-color: #fff; }
+  .buehne { max-width: 420px; margin: 0 auto; }
+  .entwurf { display: none; min-height: calc(100vh - 46px); }
+  .entwurf.an { display: block; }
+
+/* =========================================================================
+   A — RUHIG
+   Kein Schmuck, viel Luft, eine einzige Linie. Wirkt teuer, weil nichts
+   um Aufmerksamkeit kämpft. Die Handy-eigene Schrift, sauber gesetzt.
+   ========================================================================= */
+  .a {
+    background: #fff; color: #111214;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    padding: 46px 28px 60px;
+  }
+  .a .firma {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.6px;
+    text-transform: uppercase; color: #8a8f96; margin: 0 0 34px;
+  }
+  .a h1 {
+    font-size: 33px; line-height: 1.18; letter-spacing: -1.1px;
+    font-weight: 600; margin: 0 0 14px;
+  }
+  .a .text { font-size: 16.5px; line-height: 1.6; color: #5d636b; margin: 0 0 38px; }
+  .a .knopf {
+    display: block; width: 100%; text-align: left;
+    padding: 19px 20px; margin-bottom: 11px;
+    border: 1px solid #e3e1dd; border-radius: 11px;
+    background: #fff; font: inherit; font-size: 16.5px; font-weight: 500;
+    color: #111214; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(17,18,20,.05);
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 110ms cubic-bezier(.23,1,.32,1);
+  }
+  .a .knopf:active { transform: scale(.985); }
+  .a .knopf .neben { display: block; font-size: 14px; color: #8a8f96; margin-top: 2px; font-weight: 400; }
+  .a .knopf.haupt { background: #111214; color: #fff; border-color: #111214; }
+  .a .knopf.haupt .neben { color: rgba(255,255,255,.6); }
+  .a .fuss { font-size: 13px; color: #a2a7ad; margin: 30px 0 0; line-height: 1.55; }
+  .a .strich { height: 1px; background: #ebe9e5; margin: 38px 0 0; border: 0; }
+
+/* =========================================================================
+   B — VERLAG
+   Warmes Papier, Serifenschrift für die Anrede, ein tiefes Ziegelrot als
+   einzige Farbe. Die Anmutung eines guten Hotels oder einer Kanzlei.
+   ========================================================================= */
+  .b {
+    background: #f5f1e9; color: #211e1a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    padding: 44px 28px 60px;
+  }
+  .b .firma {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13.5px; letter-spacing: 2.6px; text-transform: uppercase;
+    color: #8c3a2b; margin: 0 0 12px;
+  }
+  .b .regel { height: 1px; background: #d3c9b8; border: 0; margin: 0 0 34px; }
+  .b h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 33px; line-height: 1.28; letter-spacing: -0.3px;
+    font-weight: 400; margin: 0 0 16px;
+  }
+  .b .text { font-size: 16px; line-height: 1.65; color: #5c554b; margin: 0 0 36px; }
+  .b .knopf {
+    display: block; width: 100%; text-align: left;
+    padding: 19px 20px; margin-bottom: 11px;
+    border: 1px solid #d9cfbe; border-radius: 2px;
+    background: #fffdf8; font: inherit; font-size: 16.5px; font-weight: 600;
+    color: #211e1a; cursor: pointer;
+    transition: border-color 160ms ease, transform 110ms cubic-bezier(.23,1,.32,1);
+  }
+  .b .knopf:active { transform: scale(.985); }
+  .b .knopf .neben { display: block; font-size: 14px; color: #8b8377; margin-top: 2px; font-weight: 400; }
+  .b .knopf.haupt {
+    background: #8c3a2b; color: #fdf9f3; border-color: #7a3125;
+  }
+  .b .knopf.haupt .neben { color: rgba(253,249,243,.7); }
+  .b .fuss {
+    font-family: Georgia, serif; font-size: 13.5px; font-style: italic;
+    color: #9a9186; margin: 32px 0 0; line-height: 1.6;
+  }
+
+/* =========================================================================
+   C — DUNKEL
+   Tiefes Anthrazit, cremefarbene Schrift, Ziegelrot als einzige Farbe.
+   Wirkt nach Gerät, nach Werkzeug, nach etwas Gebautem.
+   ========================================================================= */
+  .c {
+    background: #161719; color: #eceae5;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    padding: 44px 26px 60px;
+  }
+  .c .firma {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #cf3a2c; border: 1px solid rgba(207,58,44,.4);
+    padding: 6px 11px; border-radius: 3px; margin: 0 0 32px;
+  }
+  .c h1 {
+    font-size: 33px; line-height: 1.18; letter-spacing: -1px;
+    font-weight: 600; margin: 0 0 14px;
+  }
+  .c .text { font-size: 16.5px; line-height: 1.6; color: #9b9791; margin: 0 0 36px; }
+  .c .knopf {
+    display: block; width: 100%; text-align: left;
+    padding: 19px 20px; margin-bottom: 11px;
+    border: 1px solid #303236; border-radius: 9px;
+    background: #202225; font: inherit; font-size: 16.5px; font-weight: 500;
+    color: #eceae5; cursor: pointer;
+    transition: border-color 160ms ease, background 160ms ease, transform 110ms cubic-bezier(.23,1,.32,1);
+  }
+  .c .knopf:active { transform: scale(.985); }
+  .c .knopf .neben { display: block; font-size: 14px; color: #85817b; margin-top: 2px; font-weight: 400; }
+  .c .knopf.haupt { background: #cf3a2c; border-color: #cf3a2c; color: #fff; }
+  .c .knopf.haupt .neben { color: rgba(255,255,255,.72); }
+  .c .fuss { font-size: 13px; color: #6d6a66; margin: 30px 0 0; line-height: 1.55; }
+</style>
+</head>
+<body>
+
+<div class="waehler">
+  <button class="an" data-ziel="a">A · Ruhig</button>
+  <button data-ziel="b">B · Verlag</button>
+  <button data-ziel="c">C · Dunkel</button>
+</div>
+
+<div class="buehne">
+
+  <!-- A ------------------------------------------------------------------ -->
+  <div class="entwurf an" id="e-a">
+    <div class="a">
+      <p class="firma">Huber Installationen</p>
+      <h1>Guten Tag Sarah,<br>hat alles gepasst?</h1>
+      <p class="text">
+        Hans Huber hier. Wir haben heute das Bad bei Ihnen fertig gemacht.
+        Sagen Sie kurz Bescheid, wie es gelaufen ist.
+      </p>
+
+      <button class="knopf haupt">
+        Ja, alles bestens
+        <span class="neben">Ich bin zufrieden</span>
+      </button>
+      <button class="knopf">
+        Es gab ein Problem
+        <span class="neben">Etwas passt noch nicht</span>
+      </button>
+
+      <hr class="strich">
+      <p class="fuss">
+        Ihre Antwort geht direkt an den Betrieb.<br>
+        Huber Installationen · 07242 12345
+      </p>
+    </div>
+  </div>
+
+  <!-- B ------------------------------------------------------------------ -->
+  <div class="entwurf" id="e-b">
+    <div class="b">
+      <p class="firma">Huber Installationen</p>
+      <hr class="regel">
+      <h1>Guten Tag Sarah,<br>hat alles gepasst?</h1>
+      <p class="text">
+        Hans Huber hier. Wir haben heute das Bad bei Ihnen fertig gemacht.
+        Sagen Sie kurz Bescheid, wie es gelaufen ist.
+      </p>
+
+      <button class="knopf haupt">
+        Ja, alles bestens
+        <span class="neben">Ich bin zufrieden</span>
+      </button>
+      <button class="knopf">
+        Es gab ein Problem
+        <span class="neben">Etwas passt noch nicht</span>
+      </button>
+
+      <p class="fuss">
+        Ihre Antwort geht direkt an den Betrieb.<br>
+        Huber Installationen · 07242 12345
+      </p>
+    </div>
+  </div>
+
+  <!-- C ------------------------------------------------------------------ -->
+  <div class="entwurf" id="e-c">
+    <div class="c">
+      <p class="firma">Huber Installationen</p>
+      <h1>Guten Tag Sarah,<br>hat alles gepasst?</h1>
+      <p class="text">
+        Hans Huber hier. Wir haben heute das Bad bei Ihnen fertig gemacht.
+        Sagen Sie kurz Bescheid, wie es gelaufen ist.
+      </p>
+
+      <button class="knopf haupt">
+        Ja, alles bestens
+        <span class="neben">Ich bin zufrieden</span>
+      </button>
+      <button class="knopf">
+        Es gab ein Problem
+        <span class="neben">Etwas passt noch nicht</span>
+      </button>
+
+      <p class="fuss">
+        Ihre Antwort geht direkt an den Betrieb.<br>
+        Huber Installationen · 07242 12345
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll(".waehler button").forEach(function (b) {
+  b.addEventListener("click", function () {
+    document.querySelectorAll(".waehler button").forEach(function (x) { x.classList.remove("an"); });
+    document.querySelectorAll(".entwurf").forEach(function (x) { x.classList.remove("an"); });
+    b.classList.add("an");
+    document.getElementById("e-" + b.dataset.ziel).classList.add("an");
+    window.scrollTo(0, 0);
+  });
+});
+</script>
+</body>
+</html>
