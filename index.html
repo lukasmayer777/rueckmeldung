@@ -464,7 +464,7 @@ h2 {
     if (e.gesendet) {
       // Erinnerung: sagt offen, dass schon einmal gefragt wurde. Ehrlich klingt
       // besser als ein zweiter Versuch, der so tut, als wäre er der erste.
-      return anrede + ", " + b.chef + " von " + b.name + " nochmal. " +
+      return anrede + ", " + ABSENDER(b) + " nochmal. " +
              "Ich wollte nur wissen, ob bei Ihnen eh alles passt. " +
              "Kurz Bescheid: " + link + " Oder einfach zurückschreiben.";
     }
@@ -475,8 +475,14 @@ h2 {
        3. Erst dann die Frage, erst danach der Link
        4. Und immer das Angebot, einfach zurückzuschreiben. Genau das
           bietet keine Betrugsnachricht an, weil sie keine Antwort will. */
-    return anrede + ", " + b.chef + " von " + b.name + ". " +
-           "Danke, dass wir heute bei Ihnen arbeiten durften 🙂 " +
+    // Beim Handwerk fahren wir hin, in der Ordination kommt der Kunde her.
+    // Derselbe Satz waere dort falsch herum - deshalb zwei Fassungen.
+    var g = GEWERKE[b.gewerk] || {};
+    var dank = g.ort === "her"
+      ? "Danke für Ihren Besuch heute 🙂 "
+      : "Danke, dass wir heute bei Ihnen arbeiten durften 🙂 ";
+
+    return anrede + ", " + ABSENDER(b) + ". " + dank +
            "Passt soweit alles? Wenn was ist, sagen Sie's mir bitte: " + link +
            " Sie können mir auch einfach zurückschreiben.";
   }

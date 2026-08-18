@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Kurze Rückmeldung</title>
-<link rel="stylesheet" href="stil.css?stand=2026-08-14d">
+<link rel="stylesheet" href="stil.css?stand=2026-08-14f">
 </head>
 <body>
 
@@ -127,7 +127,7 @@
   </div>
 </div>
 
-<script src="betriebe.js?stand=2026-08-14d"></script>
+<script src="betriebe.js?stand=2026-08-14f"></script>
 <script>
 (function () {
   "use strict";
@@ -153,8 +153,8 @@
     vorname ? "Guten Tag " + vorname + "," : "Guten Tag,";
 
   document.getElementById("fragetext").textContent =
-    "hier ist " + betrieb.chef + " von " + betrieb.name + ". " +
-    "Wir haben " + gewerk.arbeit + " bei Ihnen abgeschlossen. Hat alles gepasst?";
+    "hier ist " + ABSENDER(betrieb) + ". " +
+    (gewerk.satz || "Wir waren bei Ihnen im Einsatz.") + " Hat alles gepasst?";
 
   if (betrieb.googleLink) {
     document.getElementById("google-knopf").href = betrieb.googleLink;
